@@ -1,18 +1,7 @@
-# Python
 __pycache__/
-*.py[cod]
-*$py.class
-
-# Database
+*.pyc
 *.db
 *.sqlite
 instance/
-
-# Uploads
-static/uploads/*
-
-# Config with secrets
-config.py
-
-# Environment
 .env
+.vscode/
