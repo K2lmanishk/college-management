@@ -1,14 +1,19 @@
 {% extends "base.html" %}
+
 {% block content %}
 <h1 class="mt-4">Manage Users</h1>
 <ol class="breadcrumb mb-4">
     <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
     <li class="breadcrumb-item active">Users</li>
 </ol>
+
 <div class="row">
+    <!-- Add User Form -->
     <div class="col-md-4">
         <div class="card mb-4">
-            <div class="card-header bg-primary text-white"><i class="bi bi-person-plus"></i> Add New User</div>
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-person-plus"></i> Add New User
+            </div>
             <div class="card-body">
                 <form method="POST" action="{{ url_for('add_user') }}">
                     <div class="mb-3"><label>Full Name</label><input type="text" class="form-control" name="full_name" required></div>
@@ -23,56 +28,260 @@
                             <option value="student">Student</option>
                         </select>
                     </div>
+
+                    <!-- Student fields -->
                     <div id="studentFields" style="display:none;">
                         <div class="mb-3"><label>Roll Number</label><input type="text" class="form-control" name="roll_no"></div>
                         <div class="mb-3"><label>Program</label>
-                            <select class="form-select" name="program_id">{% for p in programs %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}</select>
+                            <select class="form-select" name="program_id">
+                                <option value="">Select Program</option>
+                                {% for p in programs %}
+                                <option value="{{ p.id }}">{{ p.name }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="mb-3"><label>Semester</label>
-                            <select class="form-select" name="semester">{% for sem in semesters %}<option value="{{ sem }}">{{ sem }}</option>{% endfor %}</select>
+                            <select class="form-select" name="semester">
+                                {% for sem in semesters %}
+                                <option value="{{ sem }}">{{ sem }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="mb-3"><label>Date of Birth</label><input type="date" class="form-control" name="dob"></div>
                         <div class="mb-3"><label>Phone</label><input type="text" class="form-control" name="phone"></div>
                         <div class="mb-3"><label>Address</label><textarea class="form-control" name="address"></textarea></div>
                         <div class="mb-3"><label>Parent Contact</label><input type="text" class="form-control" name="parent_contact"></div>
                     </div>
+
+                    <!-- Faculty fields -->
                     <div id="facultyFields" style="display:none;">
                         <div class="mb-3"><label>Department</label><input type="text" class="form-control" name="department"></div>
                         <div class="mb-3"><label>Designation</label><input type="text" class="form-control" name="designation"></div>
                         <div class="mb-3"><label>Qualification</label><input type="text" class="form-control" name="qualification"></div>
                         <div class="mb-3"><label>Joining Date</label><input type="date" class="form-control" name="joining_date"></div>
                     </div>
+
                     <button type="submit" class="btn btn-primary w-100">Add User</button>
                 </form>
             </div>
         </div>
     </div>
+
+    <!-- User List -->
     <div class="col-md-8">
         <div class="card mb-4">
-            <div class="card-header bg-success text-white"><i class="bi bi-table"></i> User List</div>
+            <div class="card-header bg-success text-white">
+                <i class="bi bi-table"></i> User List
+            </div>
             <div class="card-body">
-                <table class="table table-bordered">
-                    <thead class="table-dark"><tr><th>Username</th><th>Full Name</th><th>Email</th><th>Role</th><th>Semester/Program</th><th>Actions</th></tr></thead>
-                    <tbody>{% for user in users %}
-                    <tr><td>{{ user.username }}</td><td>{{ user.full_name }}</td><td>{{ user.email }}</td>
-                        <td><span class="badge bg-{{ 'danger' if user.role=='admin' else 'success' if user.role=='faculty' else 'info' }}">{{ user.role|capitalize }}</span></td>
-                        <td>{% if user.student_profile %}{{ user.student_profile.semester }} / {{ user.student_profile.program.name if user.student_profile.program else '-' }}{% else %}-{% endif %}</td>
-                        <td><button class="btn btn-sm btn-warning" onclick="editUser({{ user.id }})">Edit</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteUser({{ user.id }})">Delete</button>
-                            <button class="btn btn-sm btn-info" onclick="showCredentials({{ user.id }}, '{{ user.username }}')">Credentials</button></td>
-                    </tr>{% endfor %}</tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <tr><th>Username</th><th>Full Name</th><th>Email</th><th>Role</th><th>Semester/Program</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.full_name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td><span class="badge bg-{{ 'danger' if user.role=='admin' else 'success' if user.role=='faculty' else 'info' }}">{{ user.role|capitalize }}</span></td>
+                                <td>
+                                    {% if user.student_profile %}
+                                        {{ user.student_profile.semester }} / {{ user.student_profile.program.name if user.student_profile.program else '-' }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning" onclick="editUser({{ user.id }})">Edit</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteUser({{ user.id }})">Delete</button>
+                                    <button class="btn btn-sm btn-info" onclick="showCredentials({{ user.id }}, '{{ user.username }}')">Credentials</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title"><i class="bi bi-pencil-square"></i> Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="editUserForm">
+                <div class="modal-body">
+                    <input type="hidden" name="user_id" id="editUserId">
+                    <div class="mb-3"><label>Full Name</label><input type="text" class="form-control" name="full_name" id="editFullName" required></div>
+                    <div class="mb-3"><label>Username</label><input type="text" class="form-control" name="username" id="editUsername" required></div>
+                    <div class="mb-3"><label>New Password (leave blank to keep current)</label><input type="password" class="form-control" name="new_password" id="editNewPassword" minlength="6">
+                        <small class="text-muted">Minimum 6 characters. Only fill if you want to reset the password.</small>
+                    </div>
+
+                    <div id="editStudentFields" style="display:none;">
+                        <div class="mb-3"><label>Roll Number</label><input type="text" class="form-control" name="roll_no" id="editRollNo"></div>
+                        <div class="mb-3"><label>Class</label><select class="form-select" name="class_name" id="editClassName">
+                            <option value="">Select Class</option>
+                            <option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option>
+                            <option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option>
+                            <option value="Class 7">Class 7</option><option value="Class 8">Class 8</option><option value="Class 9">Class 9</option>
+                            <option value="Class 10">Class 10</option>
+                            <option value="Class 11 Science">Class 11 Science</option><option value="Class 11 Commerce">Class 11 Commerce</option><option value="Class 11 Arts">Class 11 Arts</option>
+                            <option value="Class 12 Science">Class 12 Science</option><option value="Class 12 Commerce">Class 12 Commerce</option><option value="Class 12 Arts">Class 12 Arts</option>
+                        </select></div>
+                        <div class="mb-3"><label>Stream</label><select class="form-select" name="course_id" id="editCourseId">
+                            <option value="">Select Stream</option>
+                            {% for course in courses %}
+                            <option value="{{ course.id }}">{{ course.name }}</option>
+                            {% endfor %}
+                        </select></div>
+                        <div class="mb-3"><label>Date of Birth</label><input type="date" class="form-control" name="dob" id="editDob"></div>
+                        <div class="mb-3"><label>Phone</label><input type="text" class="form-control" name="phone" id="editPhone"></div>
+                        <div class="mb-3"><label>Address</label><textarea class="form-control" name="address" id="editAddress"></textarea></div>
+                        <div class="mb-3"><label>Parent Contact</label><input type="text" class="form-control" name="parent_contact" id="editParentContact"></div>
+                    </div>
+
+                    <div id="editFacultyFields" style="display:none;">
+                        <div class="mb-3"><label>Department</label><input type="text" class="form-control" name="department" id="editDepartment"></div>
+                        <div class="mb-3"><label>Designation</label><input type="text" class="form-control" name="designation" id="editDesignation"></div>
+                        <div class="mb-3"><label>Qualification</label><input type="text" class="form-control" name="qualification" id="editQualification"></div>
+                        <div class="mb-3"><label>Joining Date</label><input type="date" class="form-control" name="joining_date" id="editJoiningDate"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Credentials Modal -->
+<div class="modal fade" id="credentialsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title"><i class="bi bi-key"></i> User Credentials</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="credUserId">
+                <div class="mb-3"><label><strong>Username</strong></label><p id="credUsername" class="form-control-plaintext"></p></div>
+                <div class="mb-3"><label><strong>New Password (generated)</strong></label><p id="credPassword" class="form-control-plaintext text-monospace"></p>
+                    <small class="text-muted">Copy this password and give it to the user.</small>
+                </div>
+                <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> Each time you click "Reset Password", a brand new random password will be generated.</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="resetAndShowPassword()">Reset Password & Display</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-function editUser(id){ window.location.href='/admin/user/edit/'+id; }
-function deleteUser(id){ if(confirm('Delete?')) fetch('/admin/user/delete/'+id,{method:'POST'}).then(()=>location.reload()); }
-function showCredentials(id,username){ window.location.href='/admin/reset-password-show/'+id; }
-document.getElementById('roleSelect').onchange=function(){
-    document.getElementById('studentFields').style.display=this.value=='student'?'block':'none';
-    document.getElementById('facultyFields').style.display=this.value=='faculty'?'block':'none';
-};
+    // Toggle add form fields based on role
+    document.getElementById('roleSelect').addEventListener('change', function() {
+        const studentFields = document.getElementById('studentFields');
+        const facultyFields = document.getElementById('facultyFields');
+        if (this.value === 'student') {
+            studentFields.style.display = 'block';
+            facultyFields.style.display = 'none';
+        } else if (this.value === 'faculty') {
+            studentFields.style.display = 'none';
+            facultyFields.style.display = 'block';
+        } else {
+            studentFields.style.display = 'none';
+            facultyFields.style.display = 'none';
+        }
+    });
+
+    // Delete user
+    function deleteUser(userId) {
+        if (confirm('Are you sure you want to delete this user?')) {
+            fetch('/admin/user/delete/' + userId, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) location.reload();
+                    else alert('Error deleting user');
+                });
+        }
+    }
+
+    // Edit user: fetch data and set form action correctly
+    function editUser(userId) {
+        fetch('/admin/user/get/' + userId)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                document.getElementById('editUserId').value = data.id;
+                document.getElementById('editFullName').value = data.full_name;
+                document.getElementById('editUsername').value = data.username;
+                // CRITICAL: set form action to the correct edit endpoint
+                document.getElementById('editUserForm').action = '/admin/user/edit/' + data.id;
+                document.getElementById('editNewPassword').value = ''; // clear password field
+
+                if (data.role === 'student') {
+                    document.getElementById('editStudentFields').style.display = 'block';
+                    document.getElementById('editFacultyFields').style.display = 'none';
+                    document.getElementById('editRollNo').value = data.roll_no || '';
+                    document.getElementById('editClassName').value = data.class_name || '';
+                    document.getElementById('editCourseId').value = data.course_id || '';
+                    document.getElementById('editDob').value = data.dob || '';
+                    document.getElementById('editPhone').value = data.phone || '';
+                    document.getElementById('editAddress').value = data.address || '';
+                    document.getElementById('editParentContact').value = data.parent_contact || '';
+                } else if (data.role === 'faculty') {
+                    document.getElementById('editStudentFields').style.display = 'none';
+                    document.getElementById('editFacultyFields').style.display = 'block';
+                    document.getElementById('editDepartment').value = data.department || '';
+                    document.getElementById('editDesignation').value = data.designation || '';
+                    document.getElementById('editQualification').value = data.qualification || '';
+                    document.getElementById('editJoiningDate').value = data.joining_date || '';
+                } else {
+                    document.getElementById('editStudentFields').style.display = 'none';
+                    document.getElementById('editFacultyFields').style.display = 'none';
+                }
+                new bootstrap.Modal(document.getElementById('editUserModal')).show();
+            })
+            .catch(err => alert('Error loading user data: ' + err));
+    }
+
+    // Show credentials modal
+    function showCredentials(userId, username) {
+        document.getElementById('credUserId').value = userId;
+        document.getElementById('credUsername').innerText = username;
+        document.getElementById('credPassword').innerHTML = '<em>Click "Reset Password" to generate a new one</em>';
+        new bootstrap.Modal(document.getElementById('credentialsModal')).show();
+    }
+
+    // Reset password and display
+    function resetAndShowPassword() {
+        const userId = document.getElementById('credUserId').value;
+        if (!userId) return;
+        fetch('/admin/reset-password-show/' + userId, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('credUsername').innerText = data.username;
+                    document.getElementById('credPassword').innerHTML = `<code>${data.new_password}</code>`;
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(err => alert('Request failed: ' + err));
+    }
 </script>
 {% endblock %}
