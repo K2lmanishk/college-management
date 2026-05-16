@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Application Details</h1>
+<div class="card"><div class="card-header bg-info text-white">Application #{{ app.id }}</div><div class="card-body"><table class="table"><tr><th>Full Name</th><td>{{ app.full_name }}</td><th>Father</th><td>{{ app.father_name }}</td></tr><tr><th>Mother</th><td>{{ app.mother_name }}</td><th>DOB</th><td>{{ app.dob.strftime('%d-%m-%Y') if app.dob else '-' }}</td></tr>
+<tr><th>Program</th><td>{{ app.program.name if app.program else '-' }}</td><th>Phone</th><td>{{ app.phone }}</td></tr>
+<tr><th>Email</th><td>{{ app.email }}</td><th>Address</th><td>{{ app.address }}</td></tr>
+<tr><th>Previous Institution</th><td>{{ app.previous_institution }}</td><th>Status</th><td><span class="badge bg-{{ 'success' if app.status=='approved' else 'danger' if app.status=='rejected' else 'warning' }}">{{ app.status }}</span></td></tr>
+<tr><th>Submitted</th><td>{{ app.created_at.strftime('%d-%m-%Y %H:%M') }}</td><th>Remarks</th><td>{{ app.remarks or '-' }}</td></tr></table></div><div class="card-footer"><a href="{{ url_for('admin_admissions') }}" class="btn btn-secondary">Back</a></div></div>
+{% endblock %}

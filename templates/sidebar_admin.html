@@ -1,55 +1,156 @@
-<li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}">
-        <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+{% set active_page = request.endpoint %}
+
+<style>
+  /* Modern Sidebar Enhancements */
+  .sidebar .nav-section {
+    margin-bottom: 1.5rem;
+  }
+  .sidebar .section-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    padding: 0.5rem 1rem 0.3rem;
+    margin-top: 0.2rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.7rem 1rem;
+    margin: 0.2rem 0.5rem;
+    border-radius: 14px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--sidebar-text);
+    position: relative;
+    overflow: hidden;
+  }
+  .sidebar .nav-link i:first-child {
+    width: 24px;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+  .sidebar .nav-link .chevron {
+    margin-left: auto;
+    transition: transform 0.2s;
+  }
+  .sidebar .nav-link[data-bs-toggle="collapse"][aria-expanded="true"] .chevron {
+    transform: rotate(180deg);
+  }
+  .sidebar .collapse .nav-link {
+    padding-left: 2.8rem;
+    font-size: 0.9rem;
+  }
+  .sidebar .nav-link:hover:not(.active) {
+    background: var(--sidebar-hover);
+    transform: translateX(6px);
+  }
+  .sidebar .nav-link.active {
+    background: var(--sidebar-active);
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+  }
+  .sidebar .nav-link.active i {
+    color: white !important;
+  }
+  .sidebar hr {
+    margin: 0.5rem 1rem;
+    opacity: 0.3;
+  }
+</style>
+
+<!-- MAIN -->
+<div class="nav-section">
+  <div class="section-title"><i class="bi bi-grid-1x2-fill"></i> MAIN</div>
+  <a class="nav-link {% if active_page == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}">
+    <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+  </a>
+  <a class="nav-link {% if active_page in ['manage_users'] %}active{% endif %}" href="{{ url_for('manage_users') }}">
+    <i class="bi bi-people"></i> <span>Manage Users</span>
+  </a>
+</div>
+
+<!-- ACADEMIC -->
+<div class="nav-section">
+  <div class="section-title"><i class="bi bi-book-half"></i> ACADEMIC</div>
+  <a class="nav-link {% if active_page in ['manage_programs'] %}active{% endif %}" href="{{ url_for('manage_programs') }}">
+    <i class="bi bi-collection"></i> <span>Programs</span>
+  </a>
+  <a class="nav-link {% if active_page in ['manage_subjects'] %}active{% endif %}" href="{{ url_for('manage_subjects') }}">
+    <i class="bi bi-journal-bookmark-fill"></i> <span>Subjects</span>
+  </a>
+  <a class="nav-link {% if active_page in ['assign_faculty'] %}active{% endif %}" href="{{ url_for('assign_faculty') }}">
+    <i class="bi bi-person-badge"></i> <span>Assign Faculty</span>
+  </a>
+  <a class="nav-link {% if active_page in ['manage_timetable'] %}active{% endif %}" href="{{ url_for('manage_timetable') }}">
+    <i class="bi bi-calendar-week"></i> <span>Timetable</span>
+  </a>
+</div>
+
+<!-- FINANCE -->
+<div class="nav-section">
+  <div class="section-title"><i class="bi bi-cash-stack"></i> FINANCE</div>
+  <a class="nav-link {% if active_page in ['admin_manage_fees', 'add_fee', 'student_fee_history'] %}active{% endif %}" href="{{ url_for('admin_manage_fees') }}">
+    <i class="bi bi-cash-stack"></i> <span>Fee Management</span>
+  </a>
+  <a class="nav-link {% if active_page in ['manage_program_semester_fees'] %}active{% endif %}" href="{{ url_for('manage_program_semester_fees') }}">
+    <i class="bi bi-diagram-3"></i> <span>Program Fees</span>
+  </a>
+</div>
+
+<!-- COMMUNICATION -->
+<div class="nav-section">
+  <div class="section-title"><i class="bi bi-chat-dots"></i> COMMUNICATION</div>
+  <a class="nav-link {% if active_page in ['manage_notices', 'delete_notice'] %}active{% endif %}" href="{{ url_for('manage_notices') }}">
+    <i class="bi bi-megaphone"></i> <span>Notices</span>
+  </a>
+  <a class="nav-link {% if active_page in ['manage_notifications_page', 'send_notification'] %}active{% endif %}" href="{{ url_for('manage_notifications_page') }}">
+    <i class="bi bi-bell"></i> <span>Notifications</span>
+  </a>
+  <a class="nav-link {% if active_page in ['send_sms_page'] %}active{% endif %}" href="{{ url_for('send_sms_page') }}">
+    <i class="bi bi-chat-dots"></i> <span>SMS Center</span>
+  </a>
+</div>
+
+<!-- REPORTS (collapsible submenu) -->
+<div class="nav-section">
+  <div class="section-title"><i class="bi bi-bar-chart-steps"></i> REPORTS & ANALYTICS</div>
+  <a class="nav-link" data-bs-toggle="collapse" href="#reportsSubmenu" role="button" aria-expanded="false" aria-controls="reportsSubmenu">
+    <i class="bi bi-bar-chart-fill"></i> <span>Reports</span>
+    <i class="bi bi-chevron-down chevron"></i>
+  </a>
+  <div class="collapse" id="reportsSubmenu">
+    <a class="nav-link {% if active_page in ['admin_attendance_report'] %}active{% endif %}" href="{{ url_for('admin_attendance_report') }}">
+      <i class="bi bi-calendar-check"></i> Attendance Report
     </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'manage_users' %}active{% endif %}" href="{{ url_for('manage_users') }}">
-        <i class="bi bi-people"></i> <span>Manage Users</span>
+    <a class="nav-link {% if active_page in ['admin_view_marks'] %}active{% endif %}" href="{{ url_for('admin_view_marks') }}">
+      <i class="bi bi-trophy"></i> Marks Report
     </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'manage_courses' %}active{% endif %}" href="{{ url_for('manage_courses') }}">
-        <i class="bi bi-book"></i> <span>Manage Courses</span>
+    <a class="nav-link {% if active_page in ['promote_students'] %}active{% endif %}" href="{{ url_for('promote_students') }}">
+      <i class="bi bi-arrow-up-circle"></i> Promote Students
     </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'manage_subjects' %}active{% endif %}" href="{{ url_for('manage_subjects') }}">
-        <i class="bi bi-journal"></i> <span>Manage Subjects</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'assign_faculty' %}active{% endif %}" href="{{ url_for('assign_faculty') }}">
-        <i class="bi bi-person-check"></i> <span>Assign Faculty</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'manage_notices' %}active{% endif %}" href="{{ url_for('manage_notices') }}">
-        <i class="bi bi-megaphone"></i> <span>Notices</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'manage_notifications_page' %}active{% endif %}" href="{{ url_for('manage_notifications_page') }}">
-        <i class="bi bi-bell"></i> <span>Send Notifications</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'manage_timetable' %}active{% endif %}" href="{{ url_for('manage_timetable') }}">
-        <i class="bi bi-calendar-week"></i> <span>Manage Timetable</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'admin_manage_fees' %}active{% endif %}" href="{{ url_for('admin_manage_fees') }}">
-        <i class="bi bi-cash-stack"></i> <span>Fee Management</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="{{ url_for('send_sms_page') }}">
-        <i class="bi bi-chat-dots"></i> <span>Send SMS</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="{{ url_for('profile') }}">
-        <i class="bi bi-person"></i> <span>My Profile</span>
-    </a>
-</li>
+  </div>
+</div>
+
+<!-- ADMISSIONS -->
+<div class="nav-section">
+  <div class="section-title"><i class="bi bi-envelope-paper"></i> ADMISSIONS</div>
+  <a class="nav-link {% if active_page in ['admin_admissions'] %}active{% endif %}" href="{{ url_for('admin_admissions') }}">
+    <i class="bi bi-envelope-paper"></i> <span>Admission Requests</span>
+  </a>
+</div>
+
+<!-- SYSTEM & PROFILE -->
+<div class="nav-section mt-auto">
+  <hr>
+  <a class="nav-link {% if active_page in ['profile'] %}active{% endif %}" href="{{ url_for('profile') }}">
+    <i class="bi bi-person-circle"></i> <span>My Profile</span>
+  </a>
+  <a class="nav-link text-danger" href="{{ url_for('logout') }}">
+    <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
+  </a>
+</div>

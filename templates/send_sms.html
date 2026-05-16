@@ -1,50 +1,5 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1 class="mt-4"><i class="bi bi-chat-dots me-2"></i>Send SMS</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Send SMS</li>
-</ol>
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <i class="bi bi-send me-2"></i>Bulk SMS
-            </div>
-            <div class="card-body">
-                <form method="POST" action="{{ url_for('bulk_sms') }}">
-                    <div class="mb-3">
-                        <label class="form-label">Select Audience</label>
-                        <select class="form-select" name="audience" required>
-                            <option value="all_students">All Students</option>
-                            <option value="due_fees">Students with Due Fees</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Message</label>
-                        <textarea class="form-control" name="message" rows="4" maxlength="160" required></textarea>
-                        <small class="text-muted">Max 160 characters</small>
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-send-fill me-2"></i>Send SMS
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <i class="bi bi-info-circle me-2"></i>SMS History
-            </div>
-            <div class="card-body">
-                <p class="text-muted">Recent SMS sent will appear here.</p>
-                <!-- You can add SMS logs table -->
-            </div>
-        </div>
-    </div>
-</div>
+<h1>Send SMS</h1>
+<div class="row"><div class="col-md-6"><div class="card"><div class="card-header">Bulk SMS</div><div class="card-body"><form method="POST" action="{{ url_for('bulk_sms') }}"><select name="audience" class="form-select mb-2"><option value="all_students">All Students</option><option value="due_fees">Due Fees</option></select><textarea name="message" rows="4" class="form-control mb-2" maxlength="160" required></textarea><button type="submit" class="btn btn-primary">Send</button></form></div></div></div></div>
 {% endblock %}

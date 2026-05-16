@@ -1,43 +1,8 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1 class="mt-4">Attendance Details</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ url_for('student_dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Attendance</li>
-</ol>
-
-<div class="card mb-4">
-    <div class="card-header"><i class="bi bi-calendar-check"></i> Detailed Attendance Log</div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Date</th>
-                        <th>Subject</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for att, sub in attendance %}
-                    <tr>
-                        <td>{{ att.date.strftime('%Y-%m-%d') }}</td>
-                        <td>{{ sub.name }} ({{ sub.code }})</td>
-                        <td>
-                            <span class="badge {% if att.status == 'Present' %}bg-success{% else %}bg-danger{% endif %}">
-                                {{ att.status }}
-                            </span>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="3" class="text-center">No attendance records found.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+<h1>Attendance Log</h1>
+<table class="table table-bordered">
+    <thead class="table-dark"><tr><th>Date</th><th>Subject</th><th>Semester</th><th>Status</th></tr></thead>
+    <tbody>{% for att, sub in attendance %}<tr><td>{{ att.date.strftime('%d %b %Y') }}</td><td>{{ sub.name }}</td><td>{{ sub.semester }}</td><td><span class="badge bg-{{ 'success' if att.status=='Present' else 'danger' }}">{{ att.status }}</span></td></tr>{% endfor %}</tbody>
+</table>
 {% endblock %}

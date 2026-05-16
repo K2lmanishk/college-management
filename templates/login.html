@@ -2,375 +2,114 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Student Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>{{ college_name }} | Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .login-container {
-            max-width: 450px;
-            width: 100%;
-            padding: 15px;
-            margin: 0 auto;
-        }
-        
-        .login-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            animation: slideUp 0.6s ease;
-        }
-        
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .login-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px 30px 20px;
-            text-align: center;
-        }
-        
-        /* Logo Styling */
-        .logo-container {
-            margin-bottom: 15px;
-        }
-        
-        .logo-img {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            background: white;
-            border-radius: 50%;
-            padding: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .logo-icon {
-            font-size: 5rem;
-            color: white;
-            background: rgba(255, 255, 255, 0.2);
-            width: 100px;
-            height: 100px;
-            line-height: 100px;
-            text-align: center;
-            border-radius: 50%;
-            margin: 0 auto;
-        }
-        
-        .login-header h3 {
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        
-        .login-header p {
-            opacity: 0.9;
-            margin-bottom: 0;
-        }
-        
-        .login-body {
-            padding: 30px;
-            background: white;
-        }
-        
-        .form-control, .input-group-text {
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            padding: 12px 15px;
-        }
-        
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-        
-        .input-group-text {
-            background-color: #f8f9fc;
-            border-right: none;
-        }
-        
-        .input-group .form-control {
-            border-left: none;
-        }
-        
-        .btn-login {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            color: white;
-            transition: all 0.3s;
-        }
-        
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-            color: white;
-        }
-        
-        .demo-credentials {
-            background-color: #f8f9fc;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-        }
-        
-        .demo-credentials h6 {
-            color: #5a5c69;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        
-        .role-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        
-        .role-admin { background-color: #e74a3b; color: white; }
-        .role-faculty { background-color: #1cc88a; color: white; }
-        .role-student { background-color: #36b9cc; color: white; }
-        
-        .credential-text {
-            font-size: 13px;
-            color: #858796;
-            margin-bottom: 5px;
-        }
-        
-        .credential-text code {
-            background-color: #eaecf4;
-            padding: 3px 8px;
-            border-radius: 4px;
-            color: #5a5c69;
-            cursor: pointer;
-        }
-        
-        .footer-text {
-            text-align: center;
-            margin-top: 20px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-        }
-        
-        .password-toggle {
-            cursor: pointer;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; overflow: hidden; background: #0a0a1a; color: white; }
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; display: block; }
+        .login-container { position: relative; z-index: 10; width: 100%; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+        .card-3d-wrapper { perspective: 1200px; width: 100%; max-width: 500px; }
+        .glass-card { background: rgba(15, 20, 40, 0.65); backdrop-filter: blur(16px); border-radius: 48px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(139,92,246,0.2) inset; transform-style: preserve-3d; transition: transform 0.4s cubic-bezier(0.2,0.9,0.4,1.1); }
+        .glass-card::after { content: ''; position: absolute; inset: 0; border-radius: 48px; padding: 2px; background: linear-gradient(135deg, #8b5cf6, #ec4899, #8b5cf6); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 0.4s; pointer-events: none; }
+        .glass-card:hover::after { opacity: 0.6; }
+        .login-header { text-align: center; padding: 2rem 2rem 1rem; }
+        .logo-wrapper { width: 100px; height: 100px; margin: 0 auto 1.2rem; background: radial-gradient(circle at 30% 30%, #8b5cf6, #ec4899); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: floatLogo 5s ease-in-out infinite; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        @keyframes floatLogo { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+        .logo-img { width: 80px; height: 80px; object-fit: contain; border-radius: 50%; background: white; padding: 8px; }
+        .college-name { font-size: 1.9rem; font-weight: 800; background: linear-gradient(135deg, #fff, #c4b5fd, #f0abfc); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: gradientShift 4s linear infinite; }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .typewriter { display: inline-block; overflow: hidden; border-right: 2px solid #c4b5fd; white-space: nowrap; font-size: 0.9rem; width: 0; animation: typing 2.5s steps(30, end) forwards, blinkCaret 0.75s step-end infinite; }
+        @keyframes typing { from { width: 0; } to { width: 100%; } }
+        @keyframes blinkCaret { from,to { border-color: transparent; } 50% { border-color: #c4b5fd; } }
+        .login-body { padding: 2rem; }
+        .input-group-custom { position: relative; margin-bottom: 1.8rem; transition: transform 0.2s ease; }
+        .input-group-custom input { width: 100%; padding: 14px 16px 14px 48px; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.2); border-radius: 60px; font-size: 1rem; color: white; transition: all 0.3s ease; outline: none; }
+        .input-group-custom input:focus { background: rgba(255,255,255,0.12); border-color: #8b5cf6; box-shadow: 0 0 20px rgba(139,92,246,0.5); transform: scale(1.02); }
+        .input-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #c4b5fd; font-size: 1.2rem; }
+        .password-toggle { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6); cursor: pointer; }
+        .password-toggle:hover { color: #f0abfc; }
+        .form-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 10px; }
+        .form-check { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .form-check input { width: 18px; height: 18px; accent-color: #8b5cf6; cursor: pointer; }
+        .form-check label { color: rgba(255,255,255,0.85); font-size: 0.9rem; cursor: pointer; }
+        .forgot-link { color: #c4b5fd; text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+        .forgot-link:hover { color: #ec4899; text-decoration: underline; }
+        .btn-login { width: 100%; padding: 14px; border: none; border-radius: 60px; background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; font-weight: 600; font-size: 1.05rem; position: relative; overflow: hidden; transition: all 0.3s; cursor: pointer; }
+        .btn-login::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); transition: left 0.5s; z-index: -1; }
+        .btn-login:hover::before { left: 100%; }
+        .btn-login:hover { transform: scale(1.02); box-shadow: 0 0 18px #8b5cf6; }
+        .admission-link { text-align: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .admission-link a { color: #c4b5fd; text-decoration: none; transition: all 0.2s; font-size: 0.9rem; }
+        .admission-link a:hover { color: #ec4899; text-decoration: underline; }
+        .alert-glass { background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); border-radius: 60px; color: white; margin-bottom: 1.5rem; }
+        .login-footer { text-align: center; padding: 1rem; background: rgba(0,0,0,0.2); color: rgba(255,255,255,0.5); font-size: 0.75rem; border-top: 1px solid rgba(255,255,255,0.05); }
+        @media (max-width: 480px) { .login-body { padding: 1.5rem; } .college-name { font-size: 1.5rem; } .logo-wrapper { width: 80px; height: 80px; } .logo-img { width: 65px; height: 65px; } }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        <i class="bi bi-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        
-        <div class="card login-card">
+<canvas id="bg-canvas"></canvas>
+<div class="login-container">
+    <div class="card-3d-wrapper" id="cardWrapper">
+        <div class="glass-card" id="loginCard">
             <div class="login-header">
-                <!-- ============================================ -->
-                <!-- LOGO SECTION - YAHAN LOGO ADD KARO -->
-                <!-- ============================================ -->
-                
-                <!-- Option 1: Image Logo (if you have logo.png in static/images/) -->
-                <div class="logo-container">
-                    <img src="{{ url_for('static', filename='images/logo.jpg') }}" 
-                         alt="College Logo" 
-                         class="logo-img"
-                         onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='block';">
+                <div class="logo-wrapper">
+                    <img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo-img" alt="Logo" onerror="this.src='https://ui-avatars.com/api/?background=8b5cf6&color=fff&size=80&name=RC'">
                 </div>
-                
-                <!-- Option 2: Icon Logo (Fallback if image not found) -->
-                <div id="fallbackLogo" class="logo-icon" style="display: none;">
-                    <i class="bi bi-building"></i>
-                </div>
-                
-                <!-- ============================================ -->
-                
-                <h3>Student Management System</h3>
-                <p>College Major Project</p>
+                <h1 class="college-name">{{ college_name }}</h1>
+                <p class="text-white-50 mt-2"><span class="typewriter">{{ college_address }}</span></p>
             </div>
-            
             <div class="login-body">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-glass alert-dismissible fade show"><i class="bi bi-{% if category=='success' %}check-circle-fill{% elif category=='danger' %}exclamation-triangle-fill{% else %}info-circle-fill{% endif %} me-2"></i>{{ message }}<button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button></div>
+                    {% endfor %}
+                {% endwith %}
                 <form method="POST" action="{{ url_for('login') }}" id="loginForm">
-                    <div class="mb-4">
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="bi bi-person"></i>
-                            </span>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="username" 
-                                   name="username" 
-                                   placeholder="Username" 
-                                   required 
-                                   autofocus>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="bi bi-lock"></i>
-                            </span>
-                            <input type="password" 
-                                   class="form-control" 
-                                   id="password" 
-                                   name="password" 
-                                   placeholder="Password" 
-                                   required>
-                            <span class="input-group-text password-toggle" onclick="togglePassword()">
-                                <i class="bi bi-eye" id="toggleIcon"></i>
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-4 form-check">
-                        <input type="checkbox" class="form-check-input" id="rememberMe" name="remember">
-                        <label class="form-check-label" for="rememberMe">Remember me</label>
-                        <a href="#" class="float-end text-decoration-none" onclick="forgotPassword()">Forgot Password?</a>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-login w-100">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
-                    </button>
+                    <div class="input-group-custom" data-magnetic><i class="bi bi-person-fill input-icon"></i><input type="text" name="username" id="username" placeholder="Username / Roll No" required autofocus></div>
+                    <div class="input-group-custom" data-magnetic><i class="bi bi-lock-fill input-icon"></i><input type="password" name="password" id="password" placeholder="Password" required><i class="bi bi-eye-fill password-toggle" id="togglePassword"></i></div>
+                    <div class="form-options"><label class="form-check"><input type="checkbox" name="remember" id="rememberMe"><label for="rememberMe">Remember Me</label></label><a href="#" class="forgot-link" data-bs-toggle="modal" data-bs-target="#forgotModal">Forgot Password?</a></div>
+                    <button type="submit" class="btn-login" id="loginBtn"><i class="bi bi-box-arrow-in-right me-2"></i>Login</button>
                 </form>
-                
-                <!-- Demo Credentials -->
-                <div class="demo-credentials">
-                    <h6 class="text-center">
-                        <i class="bi bi-info-circle me-2"></i>Demo Credentials
-                    </h6>
-                    <div class="row text-center">
-                        <div class="col-4">
-                            <span class="role-badge role-admin">Admin</span>
-                            <div class="credential-text">
-                                <code onclick="fillCredentials('admin', 'admin123')">admin</code>
-                            </div>
-                            <div class="credential-text">
-                                <code onclick="fillCredentials('admin', 'admin123')">admin123</code>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <span class="role-badge role-faculty">Faculty</span>
-                            <div class="credential-text">
-                                <code onclick="fillCredentials('faculty1', 'pass123')">faculty1</code>
-                            </div>
-                            <div class="credential-text">
-                                <code onclick="fillCredentials('faculty1', 'pass123')">pass123</code>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <span class="role-badge role-student">Student</span>
-                            <div class="credential-text">
-                                <code onclick="fillCredentials('student1', 'pass123')">student1</code>
-                            </div>
-                            <div class="credential-text">
-                                <code onclick="fillCredentials('student1', 'pass123')">pass123</code>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="admission-link"><i class="bi bi-pencil-square me-1"></i> <a href="{{ url_for('admission_form') }}">New Student? Apply Online</a></div>
             </div>
-        </div>
-        
-        <div class="footer-text">
-            <p>© 2024 Student Management System. All rights reserved.</p>
+            <div class="login-footer"><i class="bi bi-shield-check"></i> ERP &nbsp;|&nbsp; Developer - College IT Team</div>
         </div>
     </div>
-    
-    <!-- Forgot Password Modal -->
-    <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-key me-2"></i>Forgot Password
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="forgotPasswordForm">
-                        <div class="mb-3">
-                            <label class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="resetEmail" required>
-                            <div class="form-text">Enter your registered email address.</div>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="bi bi-envelope me-2"></i>Send Reset Link
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Password visibility toggle
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const toggleIcon = document.getElementById('toggleIcon');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleIcon.classList.remove('bi-eye');
-                toggleIcon.classList.add('bi-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                toggleIcon.classList.remove('bi-eye-slash');
-                toggleIcon.classList.add('bi-eye');
-            }
-        }
-        
-        // Fill credentials
-        function fillCredentials(username, password) {
-            document.getElementById('username').value = username;
-            document.getElementById('password').value = password;
-        }
-        
-        // Forgot password modal
-        function forgotPassword() {
-            const modal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
-            modal.show();
-        }
-        
-        // Handle forgot password form
-        document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('resetEmail').value;
-            alert('Password reset link sent to: ' + email + '\n\n(Demo Feature)');
-            bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal')).hide();
-            document.getElementById('resetEmail').value = '';
-        });
-    </script>
+</div>
+<div class="modal fade" id="forgotModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content bg-dark text-white border-0 rounded-4"><div class="modal-header border-secondary"><h5 class="modal-title">Reset Password</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body"><p>Please contact the college administration to reset your password.</p><ul class="list-unstyled"><li><i class="bi bi-envelope me-2"></i> {{ college_email }}</li><li><i class="bi bi-telephone me-2"></i> {{ college_contact }}</li></ul></div><div class="modal-footer"><button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button></div></div></div></div>
+<script>
+    // Canvas particles (same as school version, works)
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resizeCanvas() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.radius = Math.random() * 2 + 1; this.speedX = (Math.random() - 0.5) * 0.4; this.speedY = (Math.random() - 0.5) * 0.4; this.opacity = Math.random() * 0.4 + 0.2; } update() { this.x += this.speedX; if (this.x < 0) this.x = width; if (this.x > width) this.x = 0; this.y += this.speedY; if (this.y < 0) this.y = height; if (this.y > height) this.y = 0; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fillStyle = `rgba(196, 181, 253, ${this.opacity})`; ctx.fill(); } }
+    function initParticles() { particles = []; for (let i = 0; i < 120; i++) particles.push(new Particle()); }
+    function animateBg() { ctx.clearRect(0, 0, width, height); const grad = ctx.createLinearGradient(0, 0, width, height); grad.addColorStop(0, '#0a0a1a'); grad.addColorStop(1, '#151530'); ctx.fillStyle = grad; ctx.fillRect(0, 0, width, height); for (let p of particles) { p.update(); p.draw(); } requestAnimationFrame(animateBg); }
+    initParticles(); animateBg();
+
+    // Card tilt
+    const card = document.getElementById('loginCard');
+    const wrapper = document.getElementById('cardWrapper');
+    if (wrapper) {
+        wrapper.addEventListener('mousemove', (e) => { const rect = wrapper.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; const centerX = rect.width/2; const centerY = rect.height/2; const rotateX = ((y - centerY) / centerY) * 6; const rotateY = ((x - centerX) / centerX) * 6; card.style.transform = `perspective(1200px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg) translateZ(5px)`; });
+        wrapper.addEventListener('mouseleave', () => { card.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0px)'; });
+    }
+    const togglePwd = document.getElementById('togglePassword');
+    const pwdInput = document.getElementById('password');
+    if (togglePwd) togglePwd.addEventListener('click', () => { pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password'; togglePwd.classList.toggle('bi-eye-fill'); togglePwd.classList.toggle('bi-eye-slash-fill'); });
+    const rememberCheck = document.getElementById('rememberMe');
+    const usernameInput = document.getElementById('username');
+    if (localStorage.getItem('rememberedUser')) { usernameInput.value = localStorage.getItem('rememberedUser'); if(rememberCheck) rememberCheck.checked = true; }
+    if(rememberCheck) rememberCheck.addEventListener('change', () => { if(rememberCheck.checked) localStorage.setItem('rememberedUser', usernameInput.value); else localStorage.removeItem('rememberedUser'); });
+    document.getElementById('loginForm').addEventListener('submit', () => { const btn = document.getElementById('loginBtn'); btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Logging in...'; });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

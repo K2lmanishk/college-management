@@ -1,62 +1,7 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1 class="mt-4">Manage Notices</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Notices</li>
-</ol>
-
-<div class="row">
-    <div class="col-md-5">
-        <div class="card mb-4">
-            <div class="card-header"><i class="bi bi-megaphone"></i> Post New Notice</div>
-            <div class="card-body">
-                <form method="POST">
-                    <div class="mb-3">
-                        <label class="form-label">Title</label>
-                        <input type="text" class="form-control" name="title" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Content</label>
-                        <textarea class="form-control" name="content" rows="5" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Audience</label>
-                        <select class="form-select" name="audience" required>
-                            <option value="all">All Users</option>
-                            <option value="students">Students Only</option>
-                            <option value="faculty">Faculty Only</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Post Notice</button>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-7">
-        <div class="card mb-4">
-            <div class="card-header"><i class="bi bi-bell"></i> Recent Notices</div>
-            <div class="card-body">
-                {% for notice in notices %}
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5>{{ notice.title }}</h5>
-                        <p>{{ notice.content }}</p>
-                        <small class="text-muted">
-                            Audience: {{ notice.audience }} | 
-                            Posted: {{ notice.created_at.strftime('%Y-%m-%d %H:%M') }}
-                        </small>
-                        <br>
-                        <button class="btn btn-sm btn-danger mt-2" onclick="deleteNotice({{ notice.id }})">
-                            Delete
-                        </button>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>
+<h1>Manage Notices</h1>
+<div class="row"><div class="col-md-5"><div class="card"><div class="card-header bg-primary text-white">Post New Notice</div><div class="card-body"><form method="POST"><input name="title" class="form-control mb-2" placeholder="Title" required><textarea name="content" class="form-control mb-2" rows="5" required></textarea><select name="audience" class="form-select mb-2"><option value="all">All</option><option value="students">Students</option><option value="faculty">Faculty</option></select><button type="submit" class="btn btn-primary">Post Notice</button></form></div></div></div>
+<div class="col-md-7"><div class="card"><div class="card-header bg-success text-white">Recent Notices</div><div class="card-body">{% for notice in notices %}<div class="card mb-2"><div class="card-body"><h5>{{ notice.title }}</h5><p>{{ notice.content }}</p><small>Audience: {{ notice.audience }} | {{ notice.created_at.strftime('%Y-%m-%d %H:%M') }}</small><button class="btn btn-sm btn-danger float-end" onclick="deleteNotice({{ notice.id }})">Delete</button></div></div>{% endfor %}</div></div></div></div>
+<script>function deleteNotice(id){ if(confirm('Delete?')) fetch('/admin/notice/delete/'+id,{method:'POST'}).then(()=>location.reload()); }</script>
 {% endblock %}

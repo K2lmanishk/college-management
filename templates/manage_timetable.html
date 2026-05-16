@@ -1,209 +1,33 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1 class="mt-4">
-    <i class="bi bi-calendar-week me-2"></i>Manage Timetable
-</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Timetable</li>
-</ol>
-
+<h1>Manage Timetable</h1>
 <div class="row">
-    <!-- Add Timetable Form -->
     <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <i class="bi bi-plus-circle me-2"></i>Add Timetable Entry
-            </div>
-            <div class="card-body">
-                <form method="POST" action="{{ url_for('add_timetable') }}">
-                    <div class="mb-3">
-                        <label class="form-label">Course</label>
-                        <select class="form-select" name="course_id" id="courseSelect" required>
-                            <option value="">Select Course</option>
-                            {% for course in courses %}
-                            <option value="{{ course.id }}">{{ course.name }} ({{ course.code }})</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Semester</label>
-                        <select class="form-select" name="semester" id="semesterSelect" required>
-                            <option value="">Select Semester</option>
-                            <option value="1">Semester 1</option>
-                            <option value="2">Semester 2</option>
-                            <option value="3">Semester 3</option>
-                            <option value="4">Semester 4</option>
-                            <option value="5">Semester 5</option>
-                            <option value="6">Semester 6</option>
-                            <option value="7">Semester 7</option>
-                            <option value="8">Semester 8</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Day</label>
-                        <select class="form-select" name="day" required>
-                            <option value="">Select Day</option>
-                            <option value="Monday">Monday</option>
-                            <option value="Tuesday">Tuesday</option>
-                            <option value="Wednesday">Wednesday</option>
-                            <option value="Thursday">Thursday</option>
-                            <option value="Friday">Friday</option>
-                            <option value="Saturday">Saturday</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Time Slot</label>
-                        <select class="form-select" name="time_slot" required>
-                            <option value="">Select Time</option>
-                            <option value="09:00-10:00">09:00 - 10:00</option>
-                            <option value="10:00-11:00">10:00 - 11:00</option>
-                            <option value="11:00-12:00">11:00 - 12:00</option>
-                            <option value="12:00-13:00">12:00 - 13:00</option>
-                            <option value="13:00-14:00">13:00 - 14:00</option>
-                            <option value="14:00-15:00">14:00 - 15:00</option>
-                            <option value="15:00-16:00">15:00 - 16:00</option>
-                            <option value="16:00-17:00">16:00 - 17:00</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Subject</label>
-                        <select class="form-select" name="subject_id" id="subjectSelect" required>
-                            <option value="">Select Subject</option>
-                            {% for subject in subjects %}
-                            <option value="{{ subject.id }}" data-course="{{ subject.course_id }}" data-semester="{{ subject.semester }}">
-                                {{ subject.name }} ({{ subject.code }})
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Faculty</label>
-                        <select class="form-select" name="faculty_id" required>
-                            <option value="">Select Faculty</option>
-                            {% for faculty in faculties %}
-                            <option value="{{ faculty.id }}">{{ faculty.user.full_name }} ({{ faculty.department }})</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Room Number</label>
-                        <input type="text" class="form-control" name="room_no" placeholder="e.g., Lab 101" required>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="bi bi-save me-2"></i>Add to Timetable
-                    </button>
-                </form>
-            </div>
-        </div>
+        <div class="card"><div class="card-header bg-primary text-white">Add Entry</div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('add_timetable') }}">
+                <select name="program_id" class="form-select mb-2">{% for p in programs %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}</select>
+                <select name="semester" class="form-select mb-2">{% for sem in semesters %}<option value="{{ sem }}">{{ sem }}</option>{% endfor %}</select>
+                <select name="day" class="form-select mb-2"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select>
+                <select name="time_slot" class="form-select mb-2">{% for slot in time_slots %}<option value="{{ slot }}">{{ slot }}</option>{% endfor %}</select>
+                <select name="subject_id" class="form-select mb-2">{% for sub in subjects %}<option value="{{ sub.id }}">{{ sub.name }} ({{ sub.code }})</option>{% endfor %}</select>
+                <select name="faculty_id" class="form-select mb-2">{% for f in faculties %}<option value="{{ f.id }}">{{ f.user.full_name }}</option>{% endfor %}</select>
+                <input name="room_no" class="form-control mb-2" placeholder="Room No">
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+        </div></div>
     </div>
-    
-    <!-- Timetable Display -->
     <div class="col-md-8">
-        <div class="card mb-4">
-            <div class="card-header bg-info text-white">
-                <i class="bi bi-table me-2"></i>Current Timetable
-                <div class="float-end">
-                    <select class="form-select form-select-sm d-inline-block w-auto" id="filterCourse">
-                        <option value="">All Courses</option>
-                        {% for course in courses %}
-                        <option value="{{ course.id }}">{{ course.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Day</th>
-                                <th>Time</th>
-                                <th>Subject</th>
-                                <th>Faculty</th>
-                                <th>Room</th>
-                                <th>Course/Sem</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for tt in timetables %}
-                            <tr>
-                                <td>{{ tt.day }}</td>
-                                <td>{{ tt.time_slot }}</td>
-                                <td>{{ tt.subject.name }} ({{ tt.subject.code }})</td>
-                                <td>{{ tt.faculty.user.full_name }}</td>
-                                <td>{{ tt.room_no }}</td>
-                                <td>{{ tt.course.code }} - Sem {{ tt.semester }}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteTimetable({{ tt.id }})">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            {% else %}
-                            <tr>
-                                <td colspan="7" class="text-center text-muted">No timetable entries yet.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+        <div class="card"><div class="card-header bg-info text-white">Timetable Entries</div>
+        <div class="card-body"><table class="table table-bordered">
+            <thead class="table-dark"><tr><th>Program</th><th>Semester</th><th>Day</th><th>Time</th><th>Subject</th><th>Faculty</th><th>Room</th><th>Action</th></tr></thead>
+            <tbody>{% for tt in timetables %}
+            <tr><td>{{ tt.program.name if tt.program else '-' }}</td><td>{{ tt.semester }}</td><td>{{ tt.day }}</td><td>{{ tt.time_slot }}</td>
+                <td>{{ tt.subject.name }}</td><td>{{ tt.faculty.user.full_name }}</td><td>{{ tt.room_no }}</td>
+                <td><button class="btn btn-sm btn-danger" onclick="deleteTimetable({{ tt.id }})">Delete</button></td></tr>{% endfor %}
+            </tbody>
+        </table></div></div>
     </div>
 </div>
-
-<script>
-// Filter subjects based on course and semester
-document.getElementById('courseSelect').addEventListener('change', filterSubjects);
-document.getElementById('semesterSelect').addEventListener('change', filterSubjects);
-
-function filterSubjects() {
-    var courseId = document.getElementById('courseSelect').value;
-    var semester = document.getElementById('semesterSelect').value;
-    var subjectSelect = document.getElementById('subjectSelect');
-    var options = subjectSelect.options;
-    
-    for (var i = 0; i < options.length; i++) {
-        var option = options[i];
-        if (option.value === '') {
-            option.style.display = '';
-            continue;
-        }
-        
-        var subjectCourse = option.getAttribute('data-course');
-        var subjectSemester = option.getAttribute('data-semester');
-        
-        if ((!courseId || subjectCourse === courseId) && (!semester || subjectSemester === semester)) {
-            option.style.display = '';
-        } else {
-            option.style.display = 'none';
-        }
-    }
-    subjectSelect.value = '';
-}
-
-function deleteTimetable(id) {
-    if (confirm('Are you sure you want to delete this timetable entry?')) {
-        fetch('/admin/timetable/delete/' + id, { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Error deleting timetable');
-                }
-            });
-    }
-}
-</script>
+<script>function deleteTimetable(id){ if(confirm('Delete?')) fetch('/admin/timetable/delete/'+id,{method:'POST'}).then(()=>location.reload()); }</script>
 {% endblock %}

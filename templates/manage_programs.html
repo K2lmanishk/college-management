@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mt-4">Manage Programs</h1>
+<ol class="breadcrumb mb-4"><li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li><li class="breadcrumb-item active">Programs</li></ol>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">Add New Program</div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_program') }}">
+                    <div class="mb-3"><label>Program Name</label><input type="text" name="name" class="form-control" required></div>
+                    <div class="mb-3"><label>Program Code</label><input type="text" name="code" class="form-control" required></div>
+                    <div class="mb-3"><label>Duration (years)</label><input type="number" name="duration_years" class="form-control" required></div>
+                    <div class="mb-3"><label>Description</label><textarea name="description" class="form-control"></textarea></div>
+                    <button type="submit" class="btn btn-primary w-100">Add Program</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">Program List</div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead class="table-dark"><tr><th>Name</th><th>Code</th><th>Duration</th><th>Actions</th></tr></thead>
+                    <tbody>
+                        {% for program in programs %}
+                        <tr>
+                            <td>{{ program.name }}</td><td>{{ program.code }}</td><td>{{ program.duration_years }} year(s)</td>
+                            <td><button class="btn btn-sm btn-danger" onclick="deleteProgram({{ program.id }})">Delete</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function deleteProgram(id) {
+    if(confirm('Delete program?')) fetch('/admin/program/delete/'+id, {method:'POST'}).then(()=>location.reload());
+}
+</script>
+{% endblock %}

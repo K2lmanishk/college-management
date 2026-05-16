@@ -1,49 +1,8 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1 class="mt-4">Fee Status</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ url_for('student_dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Fees</li>
-</ol>
-
-<div class="card mb-4">
-    <div class="card-header"><i class="bi bi-receipt"></i> Fee History</div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Amount</th>
-                        <th>Due Date</th>
-                        <th>Paid Amount</th>
-                        <th>Due Amount</th>
-                        <th>Status</th>
-                        <th>Payment Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for fee in fees %}
-                    <tr>
-                        <td>₹{{ "%.2f"|format(fee.amount) }}</td>
-                        <td>{{ fee.due_date.strftime('%Y-%m-%d') }}</td>
-                        <td>₹{{ "%.2f"|format(fee.paid_amount) }}</td>
-                        <td>₹{{ "%.2f"|format(fee.amount - fee.paid_amount) }}</td>
-                        <td>
-                            <span class="badge {% if fee.status == 'Paid' %}bg-success{% elif fee.status == 'Partial' %}bg-warning{% else %}bg-danger{% endif %}">
-                                {{ fee.status }}
-                            </span>
-                        </td>
-                        <td>{{ fee.payment_date.strftime('%Y-%m-%d') if fee.payment_date else 'N/A' }}</td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="6" class="text-center">No fee records found.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+<h1>Fee History</h1>
+<table class="table table-bordered">
+    <thead class="table-dark"><tr><th>Amount</th><th>Due Date</th><th>Paid</th><th>Due</th><th>Status</th><th>Payment Date</th></tr></thead>
+    <tbody>{% for fee in fees %}{% set due = fee.amount - fee.paid_amount %}<tr><td>₹{{ fee.amount }}</td><td>{{ fee.due_date.strftime('%Y-%m-%d') if fee.due_date else '-' }}</td><td>₹{{ fee.paid_amount }}</td><td>₹{{ due }}</td><td>{{ fee.status }}</td><td>{{ fee.payment_date.strftime('%Y-%m-%d') if fee.payment_date else '-' }}</td></tr>{% endfor %}</tbody>
+</table>
 {% endblock %}

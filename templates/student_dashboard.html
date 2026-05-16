@@ -1,90 +1,13 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1 class="mt-4">Student Dashboard</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item active">Welcome, {{ student.user.full_name if student else 'Student' }}</li>
-</ol>
-
+<h1>Student Dashboard</h1>
 <div class="row">
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-primary text-white mb-4">
-            <div class="card-body">
-                <i class="bi bi-person-badge" style="font-size: 2rem;"></i>
-                <h5 class="mt-2">{{ student.roll_no if student else 'N/A' }}</h5>
-                <p class="mb-0">Roll Number</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-success text-white mb-4">
-            <div class="card-body">
-                <i class="bi bi-book" style="font-size: 2rem;"></i>
-                <h5 class="mt-2">{{ student.course.name if student and student.course else 'N/A' }}</h5>
-                <p class="mb-0">Course</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-warning text-white mb-4">
-            <div class="card-body">
-                <i class="bi bi-layers" style="font-size: 2rem;"></i>
-                <h5 class="mt-2">Semester {{ student.semester if student else 'N/A' }}</h5>
-                <p class="mb-0">Current Semester</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-info text-white mb-4">
-            <div class="card-body">
-                <i class="bi bi-calendar-check" style="font-size: 2rem;"></i>
-                <h5 class="mt-2">{{ "%.1f"|format(attendance_percent) }}%</h5>
-                <p class="mb-0">Attendance</p>
-            </div>
-        </div>
-    </div>
+    <div class="col-md-3"><div class="card bg-primary text-white"><div class="card-body"><h5>{{ student.roll_no }}</h5><p>Roll No</p></div></div></div>
+    <div class="col-md-3"><div class="card bg-success text-white"><div class="card-body"><h5>{{ student.semester }}</h5><p>Semester</p></div></div></div>
+    <div class="col-md-3"><div class="card bg-warning text-white"><div class="card-body"><h5>{{ student.program.name if student.program else '-' }}</h5><p>Program</p></div></div></div>
+    <div class="col-md-3"><div class="card bg-info text-white"><div class="card-body"><h5>{{ "%.1f"|format(attendance_percent) }}%</h5><p>Attendance</p></div></div></div>
 </div>
-
-<div class="row">
-    <div class="col-lg-6">
-        <div class="card mb-4">
-            <div class="card-header"><i class="bi bi-trophy"></i> Recent Marks</div>
-            <div class="card-body">
-                {% if recent_marks %}
-                <div class="list-group">
-                    {% for mark in recent_marks %}
-                    <div class="list-group-item">
-                        <div class="d-flex justify-content-between">
-                            <h6>{{ mark.subject.name }}</h6>
-                            <span class="badge bg-primary">{{ mark.obtained_marks }}/{{ mark.max_marks }}</span>
-                        </div>
-                        <small>{{ mark.exam_type }}</small>
-                    </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <p class="text-muted">No marks recorded yet.</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-6">
-        <div class="card mb-4">
-            <div class="card-header"><i class="bi bi-megaphone"></i> Recent Notices</div>
-            <div class="card-body">
-                {% if notices %}
-                {% for notice in notices %}
-                <div class="alert alert-info">
-                    <strong>{{ notice.title }}</strong><br>
-                    <small>{{ notice.content[:100] }}...</small>
-                </div>
-                {% endfor %}
-                {% else %}
-                <p class="text-muted">No notices available.</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
+<div class="row mt-3"><div class="col-md-6"><div class="card"><div class="card-header">Recent Marks</div><ul class="list-group">{% for mark in recent_marks %}<li class="list-group-item">{{ mark.subject.name }}: {{ mark.obtained_marks }}/{{ mark.max_marks }} ({{ mark.exam_type }})</li>{% endfor %}</ul></div></div>
+<div class="col-md-6"><div class="card"><div class="card-header">Notices</div><ul class="list-group">{% for n in notices %}<li class="list-group-item"><strong>{{ n.title }}</strong><br><small>{{ n.content[:100] }}</small></li>{% endfor %}</ul></div></div></div>
+{% if fee %}<div class="card mt-3"><div class="card-header">Fee Status</div><div class="card-body"><div class="progress"><div class="progress-bar bg-success" style="width: {{ (fee.paid_amount/fee.amount*100)|round(1) }}%"></div></div>Paid: ₹{{ fee.paid_amount }} | Due: ₹{{ fee.amount - fee.paid_amount }}</div></div>{% endif %}
 {% endblock %}

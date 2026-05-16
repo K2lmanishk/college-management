@@ -1,77 +1,13 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="container mt-4">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-        <div class="card-header bg-primary text-white text-center py-3">
-          <h4 class="mb-0"><i class="bi bi-credit-card me-2"></i>Student ID Card</h4>
-        </div>
-        <div class="card-body p-4">
-          <div class="text-center mb-4">
-            <img src="https://ui-avatars.com/api/?name={{ student.user.full_name }}&size=100&background=4e73df&color=fff" 
-                 class="rounded-circle border border-3 border-primary" alt="Profile">
-            <h5 class="mt-3 mb-1">{{ student.user.full_name }}</h5>
-            <p class="text-muted mb-1">{{ student.course.name }} (Semester {{ student.semester }})</p>
-            <p class="text-muted"><strong>Roll No:</strong> {{ student.roll_no }}</p>
-          </div>
-          
-          <div class="row border-top pt-3">
-            <div class="col-6">
-              <small class="text-muted">Date of Birth</small>
-              <p class="mb-0">{{ student.dob.strftime('%d-%m-%Y') if student.dob else 'N/A' }}</p>
-            </div>
-            <div class="col-6">
-              <small class="text-muted">Blood Group</small>
-              <p class="mb-0">B+</p>
-            </div>
-          </div>
-          
-          <div class="row mt-2">
-            <div class="col-12">
-              <small class="text-muted">Address</small>
-              <p class="mb-0">{{ student.address or 'Not provided' }}</p>
-            </div>
-          </div>
-          
-          <hr>
-          
-          <div class="text-center">
-            <p class="mb-2"><strong>Scan for Attendance</strong></p>
-            <img src="{{ url_for('generate_qr', roll_no=student.roll_no) }}" 
-                 class="img-fluid border p-2 rounded" style="max-width: 200px;">
-            <p class="small text-muted mt-2">Valid for academic year 2024-25</p>
-          </div>
-          
-          <div class="d-grid gap-2 mt-3">
-            <button class="btn btn-outline-primary" onclick="window.print()">
-              <i class="bi bi-printer me-2"></i>Print ID Card
-            </button>
-            <button class="btn btn-outline-success" onclick="downloadQR()">
-              <i class="bi bi-download me-2"></i>Download QR Code
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-function downloadQR() {
-  const qrImg = document.querySelector('img[alt*="QR"]');
-  const link = document.createElement('a');
-  link.download = 'student_qr_{{ student.roll_no }}.png';
-  link.href = qrImg.src;
-  link.click();
-}
-</script>
-
-<style>
-@media print {
-  .navbar, .sidebar, .btn, .breadcrumb { display: none !important; }
-  .card { box-shadow: none !important; border: 1px solid #ddd; }
-}
-</style>
+<div class="container mt-4"><div class="row justify-content-center"><div class="col-md-6">
+    <div class="card shadow-lg"><div class="card-header bg-primary text-white text-center"><h4>Student ID Card</h4></div>
+    <div class="card-body text-center">
+        <img src="https://ui-avatars.com/api/?name={{ student.user.full_name }}&size=100&background=4e73df&color=fff" class="rounded-circle border border-3 border-primary" style="width:100px">
+        <h5>{{ student.user.full_name }}</h5><p>{{ student.program.name if student.program else '' }} | {{ student.semester }}</p><p><strong>Roll No:</strong> {{ student.roll_no }}</p>
+        <hr><p><strong>Parent Contact:</strong> {{ student.parent_contact or 'N/A' }}</p>
+        <img src="{{ url_for('generate_qr', roll_no=student.roll_no) }}" style="max-width:150px"><br>
+        <button class="btn btn-outline-primary mt-3" onclick="window.print()">Print ID Card</button>
+    </div></div>
+</div></div></div>
 {% endblock %}

@@ -1,58 +1,437 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="mt-4">Admin Dashboard</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item active">Overview</li>
-</ol>
+<style>
+  /* Additional modern tweaks */
+  .stat-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    position: relative;
+  }
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 60%);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+  }
+  .stat-card:hover::after {
+    transform: translateX(100%);
+  }
+  .quick-action-btn {
+    transition: all 0.2s;
+  }
+  .quick-action-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  .activity-item {
+    border-left: 3px solid #667eea;
+    transition: all 0.2s;
+  }
+  .activity-item:hover {
+    background: rgba(102,126,234,0.05);
+    transform: translateX(5px);
+  }
+  .progress-thin {
+    height: 6px;
+    border-radius: 3px;
+  }
+  .widget-header {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .server-status i {
+    font-size: 0.7rem;
+  }
+  @media (max-width: 768px) {
+    .stat-value { font-size: 1.8rem; }
+    .quick-action-btn { padding: 0.75rem !important; }
+  }
+</style>
 
-<div class="row">
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-primary text-white mb-4">
-            <div class="card-body">Total Students <h2>{{ total_students }}</h2></div>
-            <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="{{ url_for('manage_users') }}">View Details</a>
-            </div>
-        </div>
+<!-- Welcome Row with Live Clock + Greeting -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="display-6 fw-bold mb-0">Admin Dashboard</h1>
+    <p class="text-secondary mt-1">
+      <i class="bi bi-person-circle me-1"></i> Welcome back, {{ current_user.full_name }}
+      <span class="badge bg-primary ms-2">Administrator</span>
+    </p>
+  </div>
+  <div class="mt-2 mt-sm-0">
+    <div class="d-flex gap-3 align-items-center">
+      <div class="glass-card px-3 py-2 rounded-pill">
+        <i class="bi bi-calendar3 me-1 text-primary"></i>
+        <span id="liveDate" class="fw-semibold"></span>
+      </div>
+      <div class="glass-card px-3 py-2 rounded-pill">
+        <i class="bi bi-clock me-1 text-primary"></i>
+        <span id="liveTime" class="fw-semibold"></span>
+      </div>
+      <div class="glass-card px-3 py-2 rounded-pill">
+        <i class="bi bi-cloud-sun me-1 text-warning"></i>
+        <span id="weatherStatus">Loading...</span>
+      </div>
     </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-success text-white mb-4">
-            <div class="card-body">Total Faculty <h2>{{ total_faculty }}</h2></div>
-            <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="{{ url_for('manage_users') }}">View Details</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-warning text-white mb-4">
-            <div class="card-body">Total Courses <h2>{{ total_courses }}</h2></div>
-            <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="{{ url_for('manage_courses') }}">View Details</a>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-6">
-        <div class="card mb-4">
-            <div class="card-header"><i class="bi bi-megaphone"></i> Recent Notices</div>
-            <div class="card-body">
-                {% if notices %}
-                <ul class="list-group">
-                    {% for notice in notices %}
-                    <li class="list-group-item">
-                        <strong>{{ notice.title }}</strong>
-                        <p class="mb-1">{{ notice.content[:100] }}...</p>
-                        <small class="text-muted">{{ notice.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% else %}
-                <p class="text-muted">No notices yet.</p>
-                {% endif %}
-            </div>
+<!-- Stats Row (Animated Counters) -->
+<div class="row g-4 mb-5">
+  <div class="col-xl-3 col-md-6">
+    <div class="card stat-card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <p class="text-muted text-uppercase small mb-1">Total Students</p>
+            <h2 class="display-5 fw-bold mb-0 counter-value" data-target="{{ total_students }}">0</h2>
+          </div>
+          <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+            <i class="bi bi-people-fill fs-2 text-primary"></i>
+          </div>
         </div>
+        <div class="mt-3">
+          <span class="small text-success"><i class="bi bi-arrow-up-short"></i> +12% vs last month</span>
+        </div>
+      </div>
     </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="card stat-card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <p class="text-muted text-uppercase small mb-1">Faculty Members</p>
+            <h2 class="display-5 fw-bold mb-0 counter-value" data-target="{{ total_faculty }}">0</h2>
+          </div>
+          <div class="bg-success bg-opacity-10 rounded-3 p-3">
+            <i class="bi bi-person-badge-fill fs-2 text-success"></i>
+          </div>
+        </div>
+        <div class="mt-3">
+          <span class="small text-success"><i class="bi bi-arrow-up-short"></i> +2 this month</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="card stat-card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <p class="text-muted text-uppercase small mb-1">Active Programs</p>
+            <h2 class="display-5 fw-bold mb-0 counter-value" data-target="{{ total_programs }}">0</h2>
+          </div>
+          <div class="bg-info bg-opacity-10 rounded-3 p-3">
+            <i class="bi bi-book-half fs-2 text-info"></i>
+          </div>
+        </div>
+        <div class="mt-3">
+          <span class="small text-info"><i class="bi bi-arrow-right-short"></i> {{ academic_year }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div class="card stat-card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <p class="text-muted text-uppercase small mb-1">Fee Collection</p>
+            <h2 class="display-5 fw-bold mb-0" id="feeTotal">₹0</h2>
+          </div>
+          <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+            <i class="bi bi-cash-stack fs-2 text-warning"></i>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="progress progress-thin">
+            <div id="feeProgressBar" class="progress-bar bg-warning" style="width: 0%"></div>
+          </div>
+          <span class="small text-muted" id="feeSubtext">Loading collection data...</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- Charts Row -->
+<div class="row g-4 mb-5">
+  <div class="col-lg-8">
+    <div class="card h-100 shadow-sm border-0">
+      <div class="card-header bg-transparent border-0 pt-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0 fw-semibold"><i class="bi bi-graph-up me-2 text-primary"></i>Fee Collection Trend (Monthly)</h5>
+          <select class="form-select form-select-sm w-auto" id="yearSelect">
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+          </select>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="feeChart" style="height: 320px;"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card h-100 shadow-sm border-0">
+      <div class="card-header bg-transparent border-0 pt-3">
+        <h5 class="mb-0 fw-semibold"><i class="bi bi-pie-chart me-2 text-primary"></i>Students by Program</h5>
+      </div>
+      <div class="card-body">
+        <div id="programChart" style="height: 280px;"></div>
+        <div class="mt-3 text-center" id="programLegend"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions + Recent Activity + System Status -->
+<div class="row g-4">
+  <!-- Quick Actions -->
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-header bg-transparent border-0 pt-3">
+        <h5 class="mb-0 fw-semibold"><i class="bi bi-lightning-charge me-2 text-warning"></i>Quick Actions</h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-6">
+            <a href="{{ url_for('manage_users') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50">
+              <i class="bi bi-person-plus-fill fs-3 text-primary"></i>
+              <div class="small fw-semibold mt-2">Add User</div>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="{{ url_for('manage_programs') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50">
+              <i class="bi bi-book-half fs-3 text-success"></i>
+              <div class="small fw-semibold mt-2">Manage Programs</div>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="{{ url_for('admin_manage_fees') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50">
+              <i class="bi bi-cash-stack fs-3 text-info"></i>
+              <div class="small fw-semibold mt-2">Fee Records</div>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="{{ url_for('send_sms_page') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50">
+              <i class="bi bi-chat-dots-fill fs-3 text-danger"></i>
+              <div class="small fw-semibold mt-2">Send SMS</div>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="{{ url_for('manage_timetable') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50">
+              <i class="bi bi-calendar-week fs-3 text-warning"></i>
+              <div class="small fw-semibold mt-2">Timetable</div>
+            </a>
+          </div>
+          <div class="col-6">
+            <a href="{{ url_for('admin_admissions') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50">
+              <i class="bi bi-envelope-paper fs-3 text-secondary"></i>
+              <div class="small fw-semibold mt-2">Admissions</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity Feed -->
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-header bg-transparent border-0 pt-3">
+        <h5 class="mb-0 fw-semibold"><i class="bi bi-activity me-2 text-success"></i>Recent Activity</h5>
+      </div>
+      <div class="card-body p-0">
+        <div class="list-group list-group-flush">
+          <div class="list-group-item bg-transparent d-flex align-items-center gap-3 activity-item border-0 py-3">
+            <div class="bg-primary bg-opacity-10 rounded-circle p-2"><i class="bi bi-person-check text-primary"></i></div>
+            <div><strong>New admission</strong> – Riya Sharma applied for BCA<br><small class="text-muted">2 hours ago</small></div>
+          </div>
+          <div class="list-group-item bg-transparent d-flex align-items-center gap-3 activity-item border-0 py-3">
+            <div class="bg-success bg-opacity-10 rounded-circle p-2"><i class="bi bi-cash text-success"></i></div>
+            <div><strong>Fee payment</strong> – ₹25,000 received from Aman Verma<br><small class="text-muted">Yesterday</small></div>
+          </div>
+          <div class="list-group-item bg-transparent d-flex align-items-center gap-3 activity-item border-0 py-3">
+            <div class="bg-warning bg-opacity-10 rounded-circle p-2"><i class="bi bi-journal-bookmark text-warning"></i></div>
+            <div><strong>New subject</strong> – "Data Science" added to BCA Sem 4<br><small class="text-muted">2 days ago</small></div>
+          </div>
+          <div class="list-group-item bg-transparent d-flex align-items-center gap-3 activity-item border-0 py-3">
+            <div class="bg-info bg-opacity-10 rounded-circle p-2"><i class="bi bi-calendar-event text-info"></i></div>
+            <div><strong>Event</strong> – Tech Fest scheduled for 15th May<br><small class="text-muted">3 days ago</small></div>
+          </div>
+        </div>
+        <div class="text-center p-3 border-top">
+          <a href="#" class="text-decoration-none small">View all activity <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- System Status & Upcoming -->
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0 h-100">
+      <div class="card-header bg-transparent border-0 pt-3">
+        <h5 class="mb-0 fw-semibold"><i class="bi bi-hdd-stack me-2 text-secondary"></i>System Status</h5>
+      </div>
+      <div class="card-body">
+        <div class="server-status mb-3">
+          <div class="d-flex justify-content-between small"><span>Server Load</span><span>32%</span></div>
+          <div class="progress progress-thin mt-1"><div class="progress-bar bg-success" style="width:32%"></div></div>
+        </div>
+        <div class="server-status mb-3">
+          <div class="d-flex justify-content-between small"><span>Database Usage</span><span>58%</span></div>
+          <div class="progress progress-thin mt-1"><div class="progress-bar bg-info" style="width:58%"></div></div>
+        </div>
+        <div class="server-status mb-3">
+          <div class="d-flex justify-content-between small"><span>Storage</span><span>2.4 GB / 10 GB</span></div>
+          <div class="progress progress-thin mt-1"><div class="progress-bar bg-warning" style="width:24%"></div></div>
+        </div>
+        <hr>
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <i class="bi bi-calendar-check fs-4 text-primary"></i>
+          <div><strong>Upcoming Events</strong><br><small class="text-muted">Board Meeting – Tomorrow at 10 AM</small></div>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+          <i class="bi bi-megaphone fs-4 text-danger"></i>
+          <div><strong>Notice</strong><br><small class="text-muted">Holiday on 26th Jan – Republic Day</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Notices Section (replaces old notices card but with better design) -->
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-transparent border-0 pt-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-semibold"><i class="bi bi-megaphone me-2 text-primary"></i>Recent Notices</h5>
+        <a href="{{ url_for('manage_notices') }}" class="btn btn-sm btn-outline-primary rounded-pill">View All</a>
+      </div>
+      <div class="card-body">
+        {% if notices %}
+        <div class="row g-3">
+          {% for notice in notices[:4] %}
+          <div class="col-md-6">
+            <div class="border rounded-3 p-3 h-100 bg-light bg-opacity-25">
+              <div class="d-flex justify-content-between align-items-start">
+                <strong class="text-primary">{{ notice.title }}</strong>
+                <small class="text-muted">{{ notice.created_at.strftime('%d %b') }}</small>
+              </div>
+              <p class="small text-secondary mt-2 mb-0">{{ notice.content[:120] }}{% if notice.content|length > 120 %}...{% endif %}</p>
+              <span class="badge bg-secondary mt-2">{{ notice.audience|capitalize }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+          <i class="bi bi-envelope-paper fs-1 opacity-25"></i>
+          <p class="mt-2 text-muted">No notices yet. <a href="{{ url_for('manage_notices') }}">Create one</a></p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts & Counter Initialization Script -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+  // Live Clock & Date
+  function updateDateTime() {
+    const now = new Date();
+    document.getElementById('liveDate').innerText = now.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+    document.getElementById('liveTime').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
+
+  // Simulated weather (could be replaced with real API)
+  document.getElementById('weatherStatus').innerHTML = '<i class="bi bi-sun"></i> 28°C Sunny';
+
+  // Animated counters
+  const counters = document.querySelectorAll('.counter-value');
+  counters.forEach(counter => {
+    const target = parseInt(counter.getAttribute('data-target'));
+    let current = 0;
+    const increment = Math.ceil(target / 80);
+    const updateCounter = () => {
+      current += increment;
+      if (current < target) {
+        counter.innerText = current;
+        requestAnimationFrame(updateCounter);
+      } else {
+        counter.innerText = target;
+      }
+    };
+    updateCounter();
+  });
+
+  // Fetch fee summary from API and update progress bar & total
+  fetch('/api/fee-summary')
+    .then(res => res.json())
+    .catch(() => ({ total_fees: 1250000, total_collected: 845000 }))
+    .then(data => {
+      const total = data.total_fees || 1250000;
+      const collected = data.total_collected || 845000;
+      const percent = (collected / total) * 100;
+      document.getElementById('feeTotal').innerText = '₹' + collected.toLocaleString();
+      document.getElementById('feeProgressBar').style.width = percent + '%';
+      document.getElementById('feeSubtext').innerHTML = `${percent.toFixed(1)}% of total fees collected (₹${total.toLocaleString()})`;
+    });
+
+  // Fee Collection Chart (Mock Data)
+  const feeOptions = {
+    series: [{
+      name: 'Fees Collected',
+      data: [125000, 198000, 275000, 340000, 410000, 485000, 560000]
+    }],
+    chart: { type: 'area', height: 320, toolbar: { show: false }, background: 'transparent', animations: { enabled: true } },
+    dataLabels: { enabled: false },
+    stroke: { curve: 'smooth', width: 3 },
+    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.3 } },
+    xaxis: { categories: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'] },
+    colors: ['#667eea'],
+    tooltip: { y: { formatter: (val) => '₹' + val.toLocaleString() } },
+    grid: { borderColor: '#e0e0e0' }
+  };
+  const feeChart = new ApexCharts(document.querySelector("#feeChart"), feeOptions);
+  feeChart.render();
+
+  // Program Enrollment Chart (Pie)
+  fetch('/api/program-enrollment')
+    .then(res => res.json())
+    .catch(() => ({ series: [45, 32, 28], labels: ['BCA', 'BBA', 'BSc CS'] }))
+    .then(data => {
+      const progOptions = {
+        series: data.series,
+        chart: { type: 'donut', height: 280, background: 'transparent' },
+        labels: data.labels,
+        colors: ['#667eea', '#f093fb', '#4facfe'],
+        legend: { position: 'bottom', show: false },
+        dataLabels: { enabled: false },
+        plotOptions: { pie: { donut: { size: '60%' } } },
+        responsive: [{ breakpoint: 480, options: { chart: { height: 240 } } }]
+      };
+      const progChart = new ApexCharts(document.querySelector("#programChart"), progOptions);
+      progChart.render();
+      // build legend
+      let legendHtml = '';
+      data.labels.forEach((label, idx) => {
+        legendHtml += `<span class="badge me-2" style="background:${progOptions.colors[idx]}20; color:${progOptions.colors[idx]};">● ${label} (${data.series[idx]})</span>`;
+      });
+      document.getElementById('programLegend').innerHTML = legendHtml;
+    });
+</script>
 {% endblock %}

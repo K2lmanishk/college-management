@@ -1,25 +1,31 @@
-<li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'faculty_dashboard' %}active{% endif %}" href="{{ url_for('faculty_dashboard') }}">
-        <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'mark_attendance' %}active{% endif %}" href="{{ url_for('mark_attendance') }}">
-        <i class="bi bi-check2-square"></i> <span>Mark Attendance</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'enter_marks' %}active{% endif %}" href="{{ url_for('enter_marks') }}">
-        <i class="bi bi-pencil-square"></i> <span>Enter Marks</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link" href="{{ url_for('profile') }}">
-        <i class="bi bi-person"></i> <span>My Profile</span>
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link {% if request.endpoint == 'faculty_timetable' %}active{% endif %}" href="{{ url_for('faculty_timetable') }}">
-        <i class="bi bi-calendar-week"></i> <span>My Timetable</span>
-    </a>
-</li>
+{% set active_page = request.endpoint %}
+
+<div class="nav-section">
+  <div class="section-title"><i class="bi bi-grid-1x2-fill me-1"></i> MAIN</div>
+  <a class="nav-link {% if active_page == 'faculty_dashboard' %}active{% endif %}" href="{{ url_for('faculty_dashboard') }}">
+    <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+  </a>
+</div>
+
+<div class="nav-section">
+  <div class="section-title"><i class="bi bi-pencil-square me-1"></i> TEACHING</div>
+  <a class="nav-link {% if active_page in ['mark_attendance'] %}active{% endif %}" href="{{ url_for('mark_attendance') }}">
+    <i class="bi bi-check2-square"></i> <span>Mark Attendance</span>
+  </a>
+  <a class="nav-link {% if active_page in ['enter_marks'] %}active{% endif %}" href="{{ url_for('enter_marks') }}">
+    <i class="bi bi-pencil-square"></i> <span>Enter Marks</span>
+  </a>
+  <a class="nav-link {% if active_page in ['faculty_timetable'] %}active{% endif %}" href="{{ url_for('faculty_timetable') }}">
+    <i class="bi bi-calendar-week"></i> <span>My Timetable</span>
+  </a>
+</div>
+
+<div class="nav-section mt-auto">
+  <hr>
+  <a class="nav-link {% if active_page in ['profile'] %}active{% endif %}" href="{{ url_for('profile') }}">
+    <i class="bi bi-person-circle"></i> <span>My Profile</span>
+  </a>
+  <a class="nav-link text-danger" href="{{ url_for('logout') }}">
+    <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
+  </a>
+</div>

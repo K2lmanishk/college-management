@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Fee History: {{ student.user.full_name }}</h1>
+<table class="table table-bordered">
+    <thead class="table-dark"><tr><th>Amount</th><th>Due Date</th><th>Paid</th><th>Due</th><th>Status</th><th>Payment Date</th><th>Method</th><th>Transaction ID</th></tr></thead>
+    <tbody>{% for fee in fees %}{% set due = fee.amount - fee.paid_amount %}
+    <tr><td>₹{{ fee.amount }}</td><td>{{ fee.due_date.strftime('%Y-%m-%d') if fee.due_date else '-' }}</td><td>₹{{ fee.paid_amount }}</td>
+        <td>₹{{ due }}</td><td>{{ fee.status }}</td><td>{{ fee.payment_date.strftime('%Y-%m-%d') if fee.payment_date else '-' }}</td>
+        <td>{{ fee.payment_method or '-' }}</td><td>{{ fee.transaction_id or '-' }}</td></tr>{% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('admin_manage_fees') }}" class="btn btn-secondary">Back</a>
+{% endblock %}

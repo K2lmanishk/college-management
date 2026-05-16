@@ -1,7 +1,35 @@
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.so
+.Python
+env/
+venv/
+.env
+*.log
+
+# Database
 *.db
 *.sqlite
+*.sqlite3
+
+# Flask
 instance/
-.env
+.flaskenv
+
+# IDE
 .vscode/
+.idea/
+*.swp
+
+# Uploads & static temp
+static/uploads/
+static/icons/icon-*.png
+
+# Cloudinary / Twilio secrets (if present)
+config_local.py
+secrets.py
+
+# OS
+.DS_Store
+Thumbs.db

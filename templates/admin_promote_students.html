@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Promote Students to Next Semester</h1>
+<form method="POST">
+    <table class="table table-bordered">
+        <thead><tr><th>Current Semester</th><th>No. of Students</th><th>Promote To</th></tr></thead>
+        <tbody>
+            {% for sem in semesters %}
+            <tr>
+                <td>{{ sem }}</td><td>{{ semester_counts[sem] }}</td>
+                <td><select name="promote_{{ sem }}" class="form-select">
+                    <option value="">-- No promotion --</option>
+                    {% for target in semesters %}
+                        {% if target != sem %}
+                        <option value="{{ target }}">{{ target }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-success">Promote Selected</button>
+</form>
+{% endblock %}

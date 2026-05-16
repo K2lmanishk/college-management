@@ -1,6 +1,6 @@
 /**
  * ============================================
- * STUDENT MANAGEMENT SYSTEM - ULTRA ADVANCED JS
+ * COLLEGE MANAGEMENT SYSTEM - ULTRA ADVANCED JS
  * Version: 3.0 Professional
  * Features: AI Assistant, Voice Commands, Real-time Updates,
  *           Advanced Animations, Charts, Export Tools,
@@ -13,7 +13,7 @@
 // ============================================
 
 const CONFIG = {
-    appName: 'Student Management System',
+    appName: 'College Management System',
     version: '3.0.0',
     apiBaseUrl: '/api',
     refreshInterval: 30000,
@@ -527,7 +527,8 @@ function processVoiceCommand(command) {
         settings: () => navigateTo('/settings'),
         students: () => navigateTo('/admin/users'),
         faculty: () => navigateTo('/admin/users'),
-        courses: () => navigateTo('/admin/courses'),
+        programs: () => navigateTo('/admin/programs'),
+        subjects: () => navigateTo('/admin/subjects'),
         attendance: () => navigateTo('/faculty/attendance'),
         marks: () => navigateTo('/faculty/marks'),
         fees: () => navigateTo('/student/fees'),
@@ -560,7 +561,7 @@ function processVoiceCommand(command) {
         const page = command.replace(/go to|open|show/gi, '').trim();
         if (page.includes('student')) navigateTo('/admin/users');
         else if (page.includes('faculty')) navigateTo('/admin/users');
-        else if (page.includes('course')) navigateTo('/admin/courses');
+        else if (page.includes('program')) navigateTo('/admin/programs');
         else showToast(`Unknown page: ${page}`, 'warning');
     } else {
         showToast(`Command not recognized: "${command}"`, 'warning');
@@ -720,7 +721,7 @@ function initKeyboardShortcuts() {
             navigateTo('/admin/users');
         } else if (alt && key === '3') {
             e.preventDefault();
-            navigateTo('/admin/courses');
+            navigateTo('/admin/programs');
         }
         
         // Update last activity
@@ -742,12 +743,12 @@ function showKeyboardShortcutsModal() {
         ['Esc', 'Close Modals'],
         ['Alt + 1', 'Admin Dashboard'],
         ['Alt + 2', 'Manage Users'],
-        ['Alt + 3', 'Manage Courses']
+        ['Alt + 3', 'Manage Programs']
     ];
     
     let html = '<table class="table table-sm">';
     shortcuts.forEach(([key, desc]) => {
-        html += `<tr><td><kbd>${key}</kbd></td><td>${desc}</td></tr>`;
+        html += `<tr><th><kbd>${key}</kbd></th><td>${desc}</td></tr>`;
     });
     html += '</table>';
     
@@ -1023,7 +1024,7 @@ function setupOfflineSupport() {
 
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/static/js/service-worker.js')
+        navigator.serviceWorker.register('/static/service-worker.js')
             .then(reg => {
                 console.log('📱 Service Worker registered:', reg.scope);
                 
@@ -1156,93 +1157,195 @@ function updateNotificationList(notifications) {
             <div class="text-center py-5">
                 <i class="bi bi-bell-slash" style="font-size: 3rem; opacity: 0.3;"></i>
                 <p class="text-muted mt-3">No new notifications</p>
-                <small class="text-muted">You're all caught up
-                
-// ============================================
-// THEME & PARTICLES FUNCTIONS
-// ============================================
-
-// Initialize Particles
-function initParticles() {
-    if (typeof particlesJS === 'undefined') return;
+                <small class="text-muted">You're all caught up!</small>
+            </div>
+        `;
+        return;
+    }
     
-    const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+    let html = '';
+    notifications.forEach(n => {
+        html += `
+            <div class="notification-item p-3 border-bottom" data-id="${n.id}">
+                <div class="d-flex justify-content-between">
+                    <strong>${n.title}</strong>
+                    <small class="text-muted">${n.created_at}</small>
+                </div>
+                <p class="mb-0 small">${n.message}</p>
+                <button class="btn btn-sm btn-link p-0 mark-read" data-id="${n.id}">Mark as read</button>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
     
-    particlesJS('particles-js', {
-        particles: {
-            number: { value: 40, density: { enable: true, value_area: 800 } },
-            color: { value: isDark ? ['#4f46e5', '#7c3aed', '#a855f7'] : ['#667eea', '#764ba2', '#f093fb'] },
-            shape: { type: ['circle', 'triangle'] },
-            opacity: { value: 0.4, random: true, anim: { enable: true, speed: 1, opacity_min: 0.1 } },
-            size: { value: 3, random: true, anim: { enable: true, speed: 2, size_min: 0.1 } },
-            line_linked: { enable: true, distance: 150, color: isDark ? '#4f46e5' : '#667eea', opacity: 0.2, width: 1 },
-            move: { enable: true, speed: 1.5, direction: 'none', random: true, out_mode: 'out' }
-        },
-        interactivity: {
-            detect_on: 'canvas',
-            events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' } },
-            modes: { grab: { distance: 200, line_linked: { opacity: 0.5 } } }
-        },
-        retina_detect: true
+    // Add event listeners for mark read
+    document.querySelectorAll('.mark-read').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = btn.dataset.id;
+            markNotificationRead(id);
+        });
     });
 }
 
-// Re-initialize particles on theme change
-function updateThemeForParticles() {
-    if (document.getElementById('particles-js')) {
-        document.getElementById('particles-js').innerHTML = '';
-        initParticles();
+function markNotificationRead(id) {
+    fetch(`/api/notification/mark-read/${id}`, { method: 'POST' })
+        .then(() => loadNotifications());
+}
+
+function markAllNotificationsRead() {
+    fetch('/api/notification/mark-all-read', { method: 'POST' })
+        .then(() => loadNotifications());
+}
+
+// ============================================
+// THEME MANAGEMENT
+// ============================================
+
+function initThemeManager() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-bs-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+    toggleChartTheme();
+}
+
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-bs-theme');
+    const newTheme = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-bs-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeIcon(newTheme);
+    toggleChartTheme();
+    showToast(`${newTheme} mode activated`, 'info');
+}
+
+function updateThemeIcon(theme) {
+    const themeIcon = document.getElementById('themeIcon');
+    if (themeIcon) {
+        themeIcon.className = theme === 'dark' ? 'bi bi-moon-stars-fill' : 'bi bi-sun-fill';
     }
 }
 
-// Call on page load
-document.addEventListener('DOMContentLoaded', function() {
-    initParticles();
-});
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
 
-// Override toggleTheme to update particles
-const originalThemeToggle = toggleTheme;
-toggleTheme = function() {
-    if (typeof originalThemeToggle === 'function') {
-        originalThemeToggle();
-    } else {
-        const html = document.documentElement;
-        const currentTheme = html.getAttribute('data-bs-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        html.setAttribute('data-bs-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-    }
-    updateThemeForParticles();
-};
-
-// Show Toast Function (if not exists)
-if (typeof showToast !== 'function') {
-    function showToast(message, type = 'info', duration = 4000) {
-        const container = document.querySelector('.toast-container');
-        if (!container) return;
-        
-        const toast = document.createElement('div');
-        toast.className = `toast align-items-center text-white bg-${type} border-0 show`;
-        toast.setAttribute('role', 'alert');
-        
-        const icons = { success: 'check-circle', danger: 'exclamation-circle', warning: 'exclamation-triangle', info: 'info-circle' };
-        
-        toast.innerHTML = `
-            <div class="d-flex">
-                <div class="toast-body">
-                    <i class="bi bi-${icons[type]} me-2"></i>
-                    ${message}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+function showToast(message, type = 'info', duration = 4000) {
+    const toastContainer = document.querySelector('.toast-container') || (() => {
+        const container = document.createElement('div');
+        container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+        document.body.appendChild(container);
+        return container;
+    })();
+    
+    const toastEl = document.createElement('div');
+    toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
+    toastEl.setAttribute('role', 'alert');
+    toastEl.setAttribute('aria-live', 'assertive');
+    toastEl.setAttribute('aria-atomic', 'true');
+    
+    const icons = { success: 'check-circle', danger: 'exclamation-circle', warning: 'exclamation-triangle', info: 'info-circle' };
+    
+    toastEl.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-${icons[type] || 'bell'} me-2"></i>
+                ${message}
             </div>
-        `;
-        container.appendChild(toast);
-        
-        const bsToast = new bootstrap.Toast(toast, { autohide: true, delay: duration });
-        bsToast.show();
-        
-        toast.addEventListener('hidden.bs.toast', () => toast.remove());
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+    
+    toastContainer.appendChild(toastEl);
+    const toast = new bootstrap.Toast(toastEl, { autohide: true, delay: duration });
+    toast.show();
+    toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+}
+
+function celebrate() {
+    if (typeof confetti === 'function') {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     }
 }
 
-console.log('✅ Advanced Theme & Particles initialized!');
+function showAlert(title, message, icon) {
+    Swal.fire({ title, text: message, icon, confirmButtonText: 'OK' });
+}
+
+function showHelpModal() {
+    Swal.fire({
+        title: 'Help Center',
+        html: `
+            <p>Welcome to ${CONFIG.appName} Help</p>
+            <ul class="text-start">
+                <li>Use <kbd>Ctrl + K</kbd> to search</li>
+                <li>Use <kbd>Ctrl + M</kbd> for voice commands</li>
+                <li>Use <kbd>Ctrl + /</kbd> for keyboard shortcuts</li>
+                <li>Swipe left/right on mobile to toggle sidebar</li>
+            </ul>
+        `,
+        icon: 'info'
+    });
+}
+
+function autoHideAlerts() {
+    setTimeout(() => {
+        document.querySelectorAll('.alert').forEach(alert => {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 5000);
+}
+
+function setupDateDefaults() {
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+        if (!input.value) input.value = today;
+    });
+}
+
+function setupFormValidation() {
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', (e) => {
+            const required = form.querySelectorAll('[required]');
+            let valid = true;
+            required.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    valid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            if (!valid) {
+                e.preventDefault();
+                showToast('Please fill all required fields', 'warning');
+            }
+        });
+    });
+}
+
+function startIntervals() {
+    notificationCheckInterval = setInterval(() => {
+        loadNotifications();
+    }, CONFIG.refreshInterval);
+}
+
+function loadUserPreferences() {
+    const sidebarPref = localStorage.getItem('sidebarCollapsed');
+    if (sidebarPref === 'true') {
+        document.getElementById('sidebar')?.classList.add('collapsed');
+    }
+}
+
+function detectUserActivity() {
+    document.addEventListener('mousemove', () => { lastActivity = Date.now(); });
+    document.addEventListener('keypress', () => { lastActivity = Date.now(); });
+}
+
+// Stubs for functions that may be called but not fully implemented
+function updateAttendanceDisplay(data) { console.log('Attendance update:', data); }
+function updateMarksDisplay(data) { console.log('Marks update:', data); }
+function updateFeeDisplay(data) { console.log('Fee update:', data); }
+
+console.log('✅ College Management System JS Initialized');

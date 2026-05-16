@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>View Marks (Admin)</h1>
+<form method="GET" class="row mb-3">
+    <div class="col-md-3"><select name="program_id" class="form-select">{% for p in programs %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><select name="semester" class="form-select">{% for sem in semesters %}<option value="{{ sem }}">{{ sem }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><select name="exam_type" class="form-select"><option>Mid Semester</option><option>End Semester</option><option>Practical</option></select></div>
+    <div class="col-md-3"><button type="submit" class="btn btn-primary">Show</button></div>
+</form>
+{% if selected_program and selected_semester %}
+<table class="table table-bordered"><thead class="table-dark"><tr><th>Roll No</th><th>Student</th>{% for sub in subjects %}<th>{{ sub.name }}</th>{% endfor %}<th>Total %</th></tr></thead>
+<tbody>{% for item in students_data %}<tr><td>{{ item.student.roll_no }}</td><td>{{ item.student.user.full_name }}</td>{% for sub in subjects %}{% set m = item.marks.get(sub.id) %}<td>{% if m.obtained != '-' %}{{ m.obtained }}/{{ m.max }}{% else %}-{% endif %}</td>{% endfor %}<td>{% set total_obtained = 0 %}{% set total_max = 0 %}{% for sub in subjects %}{% set m = item.marks.get(sub.id) %}{% if m.obtained != '-' %}{% set total_obtained = total_obtained + m.obtained %}{% set total_max = total_max + m.max %}{% endif %}{% endfor %}{% if total_max>0 %}{{ (total_obtained/total_max*100)|round(1) }}%{% else %}-{% endif %}</td></tr>{% endfor %}</tbody></table>{% endif %}
+{% endblock %}

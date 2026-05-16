@@ -1,94 +1,20 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1 class="mt-4">Manage Subjects</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Subjects</li>
-</ol>
-
-<div class="row">
-    <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-header"><i class="bi bi-journal-plus"></i> Add New Subject</div>
-            <div class="card-body">
-                <form method="POST" action="{{ url_for('add_subject') }}">
-                    <div class="mb-3">
-                        <label class="form-label">Course</label>
-                        <select class="form-select" name="course_id" required>
-                            <option value="">Select Course</option>
-                            {% for course in courses %}
-                            <option value="{{ course.id }}">{{ course.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Semester</label>
-                        <select class="form-select" name="semester" required>
-                            {% for i in range(1, 9) %}
-                            <option value="{{ i }}">Semester {{ i }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Subject Name</label>
-                        <input type="text" class="form-control" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Subject Code</label>
-                        <input type="text" class="form-control" name="code" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Credits</label>
-                        <input type="number" class="form-control" name="credits" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Type</label>
-                        <select class="form-select" name="type" required>
-                            <option value="Theory">Theory</option>
-                            <option value="Lab">Lab</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save Subject</button>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-8">
-        <div class="card mb-4">
-            <div class="card-header"><i class="bi bi-journal"></i> Subject List</div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Subject Name</th>
-                                <th>Code</th>
-                                <th>Course</th>
-                                <th>Semester</th>
-                                <th>Credits</th>
-                                <th>Type</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for subject in subjects %}
-                            <tr>
-                                <td>{{ subject.id }}</td>
-                                <td>{{ subject.name }}</td>
-                                <td>{{ subject.code }}</td>
-                                <td>{{ subject.course.name }}</td>
-                                <td>{{ subject.semester }}</td>
-                                <td>{{ subject.credits }}</td>
-                                <td>{{ subject.type }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<h1>Manage Subjects</h1>
+...
+<form method="POST" action="{{ url_for('add_subject') }}">
+    <div class="mb-3"><label>Program</label><select name="program_id" class="form-select">
+        <option value="">All Programs (if applicable)</option>
+        {% for program in programs %}<option value="{{ program.id }}">{{ program.name }}</option>{% endfor %}
+    </select></div>
+    <div class="mb-3"><label>Semester</label><select name="semester" class="form-select" required>
+        {% for sem in semesters %}<option value="{{ sem }}">{{ sem }}</option>{% endfor %}
+    </select></div>
+    <div class="mb-3"><label>Subject Name</label><input type="text" name="name" class="form-control" required></div>
+    <div class="mb-3"><label>Subject Code</label><input type="text" name="code" class="form-control" required></div>
+    <div class="mb-3"><label>Credits</label><input type="number" name="credits" class="form-control" required></div>
+    <div class="mb-3"><label>Type</label><select name="type" class="form-select"><option>Theory</option><option>Practical</option><option>Elective</option></select></div>
+    <button type="submit" class="btn btn-primary">Add Subject</button>
+</form>
+...
 {% endblock %}

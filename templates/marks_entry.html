@@ -1,108 +1,25 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1 class="mt-4">Enter Marks</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ url_for('faculty_dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Marks Entry</li>
-</ol>
-
-<div class="card mb-4">
-    <div class="card-header"><i class="bi bi-pencil-square"></i> Select Subject and Exam</div>
-    <div class="card-body">
-        <form method="POST" id="marksForm">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="mb-3">
-                        <label class="form-label">Subject</label>
-                        <select class="form-select" name="subject_id" id="subjectSelect" required>
-                            <option value="">Select Subject</option>
-                            {% for assignment in assignments %}
-                            <option value="{{ assignment.subject.id }}">{{ assignment.subject.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label class="form-label">Exam Type</label>
-                        <select class="form-select" name="exam_type" required>
-                            <option value="Internal I">Internal I</option>
-                            <option value="Internal II">Internal II</option>
-                            <option value="Final Exam">Final Exam</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mb-3">
-                        <label class="form-label">Maximum Marks</label>
-                        <input type="number" class="form-control" name="max_marks" id="maxMarks" required>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="mb-3">
-                        <label class="form-label">&nbsp;</label>
-                        <button type="button" class="btn btn-info d-block" onclick="loadStudentsForMarks()">
-                            Load Students
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="studentMarksList" style="display: none;">
-                <hr>
-                <h5>Enter Marks</h5>
-                <div class="table-responsive">
-                    <table class="table table-bordered">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Roll No</th>
-                                <th>Student Name</th>
-                                <th>Marks Obtained</th>
-                            </tr>
-                        </thead>
-                        <tbody id="studentMarksTableBody">
-                        </tbody>
-                    </table>
-                </div>
-                <button type="submit" class="btn btn-primary">Save Marks</button>
-            </div>
-        </form>
+<h1>Enter Marks</h1>
+<form method="POST">
+    <select name="subject_id" id="subjSelect" class="form-select mb-2" required>{% for a in assignments %}<option value="{{ a.subject.id }}">{{ a.subject.name }} ({{ a.subject.semester }})</option>{% endfor %}</select>
+    <select name="exam_type" class="form-select mb-2" required><option>Mid Semester</option><option>End Semester</option><option>Practical</option><option>Internal Assessment</option></select>
+    <input type="number" name="max_marks" id="maxMarks" class="form-control mb-2" placeholder="Maximum Marks" required>
+    <button type="button" class="btn btn-info" onclick="loadStudents()">Load Students</button>
+    <div id="studentMarksList" style="display:none; margin-top:20px;">
+        <table class="table table-bordered"><thead class="table-dark"><tr><th>Roll No</th><th>Student</th><th>Marks</th></tr></thead><tbody id="marksTbody"></tbody></table>
+        <button type="submit" class="btn btn-primary">Save Marks</button>
     </div>
-</div>
-
+</form>
 <script>
-function loadStudentsForMarks() {
-    var subjectId = document.getElementById('subjectSelect').value;
-    var maxMarks = document.getElementById('maxMarks').value;
-    
-    if (!subjectId) {
-        alert('Please select a subject');
-        return;
-    }
-    if (!maxMarks || maxMarks <= 0) {
-        alert('Please enter maximum marks');
-        return;
-    }
-    
-    fetch('/api/get_students_by_subject/' + subjectId)
-        .then(response => response.json())
-        .then(data => {
-            var tbody = document.getElementById('studentMarksTableBody');
-            var html = '';
-            data.forEach(student => {
-                html += '<tr>' +
-                    '<td>' + student.roll_no + '</td>' +
-                    '<td>' + student.name + '</td>' +
-                    '<td>' +
-                        '<input type="number" class="form-control" name="marks_' + student.id + '" ' +
-                        'min="0" max="' + maxMarks + '" step="0.5" required>' +
-                    '</td>' +
-                '</tr>';
-            });
-            tbody.innerHTML = html;
-            document.getElementById('studentMarksList').style.display = 'block';
-        });
+function loadStudents(){
+    let subj=document.getElementById('subjSelect').value, max=document.getElementById('maxMarks').value;
+    if(!subj || !max) return;
+    fetch('/api/get_students_by_subject/'+subj).then(res=>res.json()).then(data=>{
+        let html=''; data.forEach(s=>{ html+=`<tr><td>${s.roll_no}</td><td>${s.name}</td><td><input type="number" name="marks_${s.id}" class="form-control" min="0" max="${max}" step="0.5"></td></tr>`; });
+        document.getElementById('marksTbody').innerHTML=html;
+        document.getElementById('studentMarksList').style.display='block';
+    });
 }
 </script>
 {% endblock %}

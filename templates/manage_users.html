@@ -1,36 +1,21 @@
 {% extends "base.html" %}
-
 {% block content %}
 <h1 class="mt-4">Manage Users</h1>
 <ol class="breadcrumb mb-4">
     <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
     <li class="breadcrumb-item active">Users</li>
 </ol>
-
 <div class="row">
     <div class="col-md-4">
         <div class="card mb-4">
-            <div class="card-header"><i class="bi bi-person-plus"></i> Add New User</div>
+            <div class="card-header bg-primary text-white"><i class="bi bi-person-plus"></i> Add New User</div>
             <div class="card-body">
-                <form method="POST" action="{{ url_for('add_user') }}" id="addUserForm">
-                    <div class="mb-3">
-                        <label class="form-label">Full Name</label>
-                        <input type="text" class="form-control" name="full_name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <input type="text" class="form-control" name="username" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" name="email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" class="form-control" name="password" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Role</label>
+                <form method="POST" action="{{ url_for('add_user') }}">
+                    <div class="mb-3"><label>Full Name</label><input type="text" class="form-control" name="full_name" required></div>
+                    <div class="mb-3"><label>Username</label><input type="text" class="form-control" name="username" required></div>
+                    <div class="mb-3"><label>Email</label><input type="email" class="form-control" name="email" required></div>
+                    <div class="mb-3"><label>Password</label><input type="password" class="form-control" name="password" required></div>
+                    <div class="mb-3"><label>Role</label>
                         <select class="form-select" name="role" id="roleSelect" required>
                             <option value="">Select Role</option>
                             <option value="admin">Admin</option>
@@ -38,126 +23,56 @@
                             <option value="student">Student</option>
                         </select>
                     </div>
-                    
-                    <div id="studentFields" style="display: none;">
-                        <div class="mb-3">
-                            <label class="form-label">Roll Number</label>
-                            <input type="text" class="form-control" name="roll_no">
+                    <div id="studentFields" style="display:none;">
+                        <div class="mb-3"><label>Roll Number</label><input type="text" class="form-control" name="roll_no"></div>
+                        <div class="mb-3"><label>Program</label>
+                            <select class="form-select" name="program_id">{% for p in programs %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}</select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Course</label>
-                            <select class="form-select" name="course_id">
-                                <option value="">Select Course</option>
-                                {% for course in courses %}
-                                <option value="{{ course.id }}">{{ course.name }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="mb-3"><label>Semester</label>
+                            <select class="form-select" name="semester">{% for sem in semesters %}<option value="{{ sem }}">{{ sem }}</option>{% endfor %}</select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Semester</label>
-                            <input type="number" class="form-control" name="semester" min="1" max="8">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Date of Birth</label>
-                            <input type="date" class="form-control" name="dob">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Phone</label>
-                            <input type="text" class="form-control" name="phone">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Address</label>
-                            <textarea class="form-control" name="address" rows="2"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Parent Contact</label>
-                            <input type="text" class="form-control" name="parent_contact">
-                        </div>
+                        <div class="mb-3"><label>Date of Birth</label><input type="date" class="form-control" name="dob"></div>
+                        <div class="mb-3"><label>Phone</label><input type="text" class="form-control" name="phone"></div>
+                        <div class="mb-3"><label>Address</label><textarea class="form-control" name="address"></textarea></div>
+                        <div class="mb-3"><label>Parent Contact</label><input type="text" class="form-control" name="parent_contact"></div>
                     </div>
-                    
-                    <div id="facultyFields" style="display: none;">
-                        <div class="mb-3">
-                            <label class="form-label">Department</label>
-                            <input type="text" class="form-control" name="department">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Designation</label>
-                            <input type="text" class="form-control" name="designation">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Qualification</label>
-                            <input type="text" class="form-control" name="qualification">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Joining Date</label>
-                            <input type="date" class="form-control" name="joining_date">
-                        </div>
+                    <div id="facultyFields" style="display:none;">
+                        <div class="mb-3"><label>Department</label><input type="text" class="form-control" name="department"></div>
+                        <div class="mb-3"><label>Designation</label><input type="text" class="form-control" name="designation"></div>
+                        <div class="mb-3"><label>Qualification</label><input type="text" class="form-control" name="qualification"></div>
+                        <div class="mb-3"><label>Joining Date</label><input type="date" class="form-control" name="joining_date"></div>
                     </div>
-                    
-                    <button type="submit" class="btn btn-primary">Add User</button>
+                    <button type="submit" class="btn btn-primary w-100">Add User</button>
                 </form>
             </div>
         </div>
     </div>
-    
     <div class="col-md-8">
         <div class="card mb-4">
-            <div class="card-header"><i class="bi bi-table"></i> User List</div>
+            <div class="card-header bg-success text-white"><i class="bi bi-table"></i> User List</div>
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Username</th>
-                                <th>Full Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for user in users %}
-                            <tr>
-                                <td>{{ user.id }}</td>
-                                <td>{{ user.username }}</td>
-                                <td>{{ user.full_name }}</td>
-                                <td>{{ user.email }}</td>
-                                <td>
-                                    <span class="badge {% if user.role == 'admin' %}bg-danger{% elif user.role == 'faculty' %}bg-success{% else %}bg-info{% endif %}">
-                                        {{ user.role|capitalize }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-danger" onclick="deleteUser({{ user.id }})">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                <table class="table table-bordered">
+                    <thead class="table-dark"><tr><th>Username</th><th>Full Name</th><th>Email</th><th>Role</th><th>Semester/Program</th><th>Actions</th></tr></thead>
+                    <tbody>{% for user in users %}
+                    <tr><td>{{ user.username }}</td><td>{{ user.full_name }}</td><td>{{ user.email }}</td>
+                        <td><span class="badge bg-{{ 'danger' if user.role=='admin' else 'success' if user.role=='faculty' else 'info' }}">{{ user.role|capitalize }}</span></td>
+                        <td>{% if user.student_profile %}{{ user.student_profile.semester }} / {{ user.student_profile.program.name if user.student_profile.program else '-' }}{% else %}-{% endif %}</td>
+                        <td><button class="btn btn-sm btn-warning" onclick="editUser({{ user.id }})">Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteUser({{ user.id }})">Delete</button>
+                            <button class="btn btn-sm btn-info" onclick="showCredentials({{ user.id }}, '{{ user.username }}')">Credentials</button></td>
+                    </tr>{% endfor %}</tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
-
 <script>
-document.getElementById('roleSelect').addEventListener('change', function() {
-    var studentFields = document.getElementById('studentFields');
-    var facultyFields = document.getElementById('facultyFields');
-    
-    if (this.value === 'student') {
-        studentFields.style.display = 'block';
-        facultyFields.style.display = 'none';
-    } else if (this.value === 'faculty') {
-        studentFields.style.display = 'none';
-        facultyFields.style.display = 'block';
-    } else {
-        studentFields.style.display = 'none';
-        facultyFields.style.display = 'none';
-    }
-});
+function editUser(id){ window.location.href='/admin/user/edit/'+id; }
+function deleteUser(id){ if(confirm('Delete?')) fetch('/admin/user/delete/'+id,{method:'POST'}).then(()=>location.reload()); }
+function showCredentials(id,username){ window.location.href='/admin/reset-password-show/'+id; }
+document.getElementById('roleSelect').onchange=function(){
+    document.getElementById('studentFields').style.display=this.value=='student'?'block':'none';
+    document.getElementById('facultyFields').style.display=this.value=='faculty'?'block':'none';
+};
 </script>
 {% endblock %}

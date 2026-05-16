@@ -1,48 +1,8 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1 class="mt-4">Marks & Results</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ url_for('student_dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Marks</li>
-</ol>
-
-<div class="card mb-4">
-    <div class="card-header"><i class="bi bi-trophy"></i> Subject-wise Performance</div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Subject</th>
-                        <th>Exam Type</th>
-                        <th>Max Marks</th>
-                        <th>Obtained</th>
-                        <th>Percentage</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for mark, sub in marks %}
-                    <tr>
-                        <td>{{ sub.name }} ({{ sub.code }})</td>
-                        <td>{{ mark.exam_type }}</td>
-                        <td>{{ mark.max_marks }}</td>
-                        <td>{{ mark.obtained_marks }}</td>
-                        <td>
-                            {% set percent = (mark.obtained_marks / mark.max_marks * 100) %}
-                            <span class="badge {% if percent >= 75 %}bg-success{% elif percent >= 40 %}bg-warning{% else %}bg-danger{% endif %}">
-                                {{ "%.1f"|format(percent) }}%
-                            </span>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="5" class="text-center">No marks recorded yet.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+<h1>Marks & Results</h1>
+<table class="table table-bordered">
+    <thead class="table-dark"><tr><th>Subject</th><th>Exam</th><th>Obtained</th><th>Max</th><th>%</th><th>Grade</th></tr></thead>
+    <tbody>{% for mark, sub in marks %}{% set percent = (mark.obtained_marks/mark.max_marks*100) %}<tr><td>{{ sub.name }}</td><td>{{ mark.exam_type }}</td><td>{{ mark.obtained_marks }}</td><td>{{ mark.max_marks }}</td><td>{{ "%.1f"|format(percent) }}%</td><td>{% if percent>=90 %}A+{% elif percent>=80 %}A{% elif percent>=70 %}B+{% elif percent>=60 %}B{% elif percent>=50 %}C{% else %}D{% endif %}</td></tr>{% endfor %}</tbody>
+</table>
 {% endblock %}

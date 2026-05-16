@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Admission Applications</h1>
+<ul class="nav nav-tabs">{% for s in statuses %}<li class="nav-item"><a class="nav-link {% if current_status==s %}active{% endif %}" href="{{ url_for('admin_admissions', status=s) }}">{{ s|capitalize }}</a></li>{% endfor %}</ul>
+<div class="card mt-3"><div class="card-header bg-primary text-white">Applications ({{ current_status }})</div><div class="card-body"><table class="table table-bordered"><thead class="table-dark"><tr><th>Name</th><th>Program</th><th>Phone</th><th>Submitted</th><th>Actions</th></tr></thead>
+<tbody>{% for app in applications %}<tr><td>{{ app.full_name }}</td><td>{{ app.program.name if app.program else '-' }}</td><td>{{ app.phone }}</td><td>{{ app.created_at.strftime('%d-%m-%Y') }}</td>
+<td><a href="{{ url_for('view_admission', app_id=app.id) }}" class="btn btn-sm btn-info">View</a>
+{% if current_status=='pending' %}<button class="btn btn-sm btn-success" onclick="approve({{ app.id }})">Approve</button><button class="btn btn-sm btn-danger" onclick="reject({{ app.id }})">Reject</button>{% endif %}
+<button class="btn btn-sm btn-dark" onclick="deleteApp({{ app.id }})">Delete</button></td></tr>{% endfor %}</tbody></table></div></div>
+<script>
+function approve(id){ fetch('/admin/admission/approve/'+id,{method:'POST'}).then(()=>location.reload()); }
+function reject(id){ let reason=prompt('Reason for rejection:'); if(reason) fetch('/admin/admission/reject/'+id,{method:'POST',body:'remarks='+encodeURIComponent(reason),headers:{'Content-Type':'application/x-www-form-urlencoded'}}).then(()=>location.reload()); }
+function deleteApp(id){ if(confirm('Delete?')) fetch('/admin/admission/delete/'+id,{method:'POST'}).then(()=>location.reload()); }
+</script>
+{% endblock %}

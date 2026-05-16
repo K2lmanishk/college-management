@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Attendance Report</h1>
+<form method="GET" class="row mb-3">
+    <div class="col-md-3"><select name="program_id" class="form-select">{% for p in programs %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><select name="semester" class="form-select">{% for sem in semesters %}<option value="{{ sem }}">{{ sem }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><select name="subject_id" class="form-select"><option value="">All Subjects</option>{% for sub in subjects %}<option value="{{ sub.id }}">{{ sub.name }}</option>{% endfor %}</select></div>
+    <div class="col-md-3"><button type="submit" class="btn btn-primary">Show</button></div>
+</form>
+{% if selected_program and selected_semester %}
+<table class="table table-bordered"><thead class="table-dark"><tr><th>Roll No</th><th>Student</th><th>Total</th><th>Present</th><th>%</th><th>Status</th></tr></thead><tbody>
+{% for s in students %}<tr><td>{{ s.student.roll_no }}</td><td>{{ s.student.user.full_name }}</td><td>{{ s.total }}</td><td>{{ s.present }}</td><td>{{ s.percent }}%</td><td>{% if s.percent>=75 %}Good{% elif s.percent>=60 %}Average{% else %}Low{% endif %}</td></tr>{% endfor %}
+</tbody></table>{% endif %}
+{% endblock %}
