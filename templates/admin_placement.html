@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Placement Cell</h1>
+<div class="row"><div class="col-md-5">
+    <div class="card"><div class="card-header bg-primary text-white">Post New Job</div><div class="card-body">
+        <form method="POST" action="{{ url_for('add_job') }}">
+            <div class="mb-2"><input name="company" class="form-control" placeholder="Company Name" required></div>
+            <div class="mb-2"><input name="title" class="form-control" placeholder="Job Title" required></div>
+            <div class="mb-2"><textarea name="description" class="form-control" rows="3" placeholder="Job Description"></textarea></div>
+            <div class="mb-2"><input name="eligibility" class="form-control" placeholder="Eligibility (e.g., BCA 60%+)"></div>
+            <div class="mb-2"><input name="last_date" type="date" class="form-control" required></div>
+            <button class="btn btn-primary">Post Job</button>
+        </form>
+    </div></div>
+</div><div class="col-md-7">
+    <div class="card"><div class="card-header bg-info text-white">Job Posts</div><div class="card-body">
+        <table class="table table-bordered"><thead class="table-dark"><tr><th>Company</th><th>Title</th><th>Last Date</th><th>Applications</th><th>Status</th></tr></thead>
+        <tbody>{% for j in jobs %}<tr><td>{{ j.company }}</td><td>{{ j.title }}</td><td>{{ j.last_date.strftime('%d-%m-%Y') }}</td><td><a href="#" onclick="viewApplications({{ j.id }})">{{ j.applications|length }}</a></td><td>{{ j.status }}</td></tr>{% endfor %}</tbody></table>
+    </div></div>
+</div></div>
+<div class="card mt-3"><div class="card-header bg-warning">Applications</div><div class="card-body"><div id="applicationsList">Select a job to see applications</div></div></div>
+<script>
+function viewApplications(jobId) {
+    fetch(`/api/job_applications/${jobId}`).then(res=>res.json()).then(data=>{
+        let html = '<table class="table"><thead><tr><th>Student</th><th>Roll No</th><th>Applied On</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+        data.forEach(app => {
+            html += `<tr><td>${app.student_name}</td><td>${app.roll_no}</td><td>${app.applied_date}</td><td>${app.status}</td>
+            <td><a href="/admin/placement/update_status/${app.id}/Shortlisted" class="btn btn-sm btn-success">Shortlist</a>
+            <a href="/admin/placement/update_status/${app.id}/Rejected" class="btn btn-sm btn-danger">Reject</a></td></tr>`;
+        });
+        html += '</tbody></table>';
+        document.getElementById('applicationsList').innerHTML = html;
+    });
+}
+</script>
+{% endblock %}

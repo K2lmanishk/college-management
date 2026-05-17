@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Upload Study Material</h1>
+<div class="row"><div class="col-md-5">
+    <div class="card"><div class="card-header bg-primary text-white">Upload New Material</div><div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-2"><input name="title" class="form-control" placeholder="Title" required></div>
+            <div class="mb-2"><textarea name="description" class="form-control" placeholder="Description"></textarea></div>
+            <div class="mb-2"><select name="program_id" class="form-select"><option value="">All Programs</option>{% for p in programs %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}</select></div>
+            <div class="mb-2"><select name="semester" class="form-select"><option value="">All Semesters</option>{% for s in semesters %}<option>{{ s }}</option>{% endfor %}</select></div>
+            <div class="mb-2"><input type="file" name="file" class="form-control" required></div>
+            <button class="btn btn-primary">Upload</button>
+        </form>
+    </div></div>
+</div><div class="col-md-7">
+    <div class="card"><div class="card-header bg-info text-white">My Uploads</div><div class="card-body">
+        <table class="table"><thead><tr><th>Title</th><th>Program</th><th>Semester</th><th>File</th></tr></thead>
+        <tbody>{% for m in materials %}<tr><td>{{ m.title }}</td><td>{{ m.program.name if m.program else 'All' }}</td><td>{{ m.semester or 'All' }}</td><td><a href="{{ m.file_path }}" target="_blank">Download</a></td></tr>{% endfor %}</tbody></table>
+    </div></div>
+</div></div>
+{% endblock %}

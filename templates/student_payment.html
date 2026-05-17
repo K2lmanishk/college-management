@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>Complete Your Payment</h4>
+                </div>
+                <div class="card-body text-center">
+                    <h5>Fee Amount: <strong>₹{{ "%.2f"|format(due) }}</strong></h5>
+                    <p>You will be redirected to Razorpay secure payment gateway.</p>
+                    <button id="rzp-button" class="btn btn-success btn-lg">Pay Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    var options = {
+        "key": "{{ razorpay_key }}",
+        "amount": "{{ order.amount }}",
+        "currency": "INR",
+        "name": "College Management System",
+        "description": "Fee Payment",
+        "order_id": "{{ order.id }}",
+        "handler": function (response) {
+            // Submit form to success endpoint
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = "{{ url_for('payment_success') }}";
+            var input = document.createElement('input');
+            input.name = 'razorpay_payment_id';
+            input.value = response.razorpay_payment_id;
+            form.appendChild(input);
+            var feeInput = document.createElement('input');
+            feeInput.name = 'fee_id';
+            feeInput.value = "{{ fee.id }}";
+            form.appendChild(feeInput);
+            var amountInput = document.createElement('input');
+            amountInput.name = 'amount';
+            amountInput.value = "{{ due }}";
+            form.appendChild(amountInput);
+            document.body.appendChild(form);
+            form.submit();
+        },
+        "theme": { "color": "#667eea" }
+    };
+    var rzp = new Razorpay(options);
+    document.getElementById('rzp-button').onclick = function(e) {
+        rzp.open();
+        e.preventDefault();
+    }
+</script>
+{% endblock %}

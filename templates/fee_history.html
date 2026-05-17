@@ -1,13 +1,69 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h1>Fee History: {{ student.user.full_name }}</h1>
-<table class="table table-bordered">
-    <thead class="table-dark"><tr><th>Amount</th><th>Due Date</th><th>Paid</th><th>Due</th><th>Status</th><th>Payment Date</th><th>Method</th><th>Transaction ID</th></tr></thead>
-    <tbody>{% for fee in fees %}{% set due = fee.amount - fee.paid_amount %}
-    <tr><td>₹{{ fee.amount }}</td><td>{{ fee.due_date.strftime('%Y-%m-%d') if fee.due_date else '-' }}</td><td>₹{{ fee.paid_amount }}</td>
-        <td>₹{{ due }}</td><td>{{ fee.status }}</td><td>{{ fee.payment_date.strftime('%Y-%m-%d') if fee.payment_date else '-' }}</td>
-        <td>{{ fee.payment_method or '-' }}</td><td>{{ fee.transaction_id or '-' }}</td></tr>{% endfor %}
-    </tbody>
-</table>
-<a href="{{ url_for('admin_manage_fees') }}" class="btn btn-secondary">Back</a>
+<h1 class="mt-4">
+    <i class="bi bi-clock-history me-2"></i>Fee History: {{ student.user.full_name }}
+</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('admin_manage_fees') }}">Fee Management</a></li>
+    <li class="breadcrumb-item active">Fee History</li>
+</ol>
+
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <i class="bi bi-receipt me-2"></i>All Fee Records
+    </div>
+    <div class="card-body">
+        {% if fees %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Amount</th>
+                        <th>Due Date</th>
+                        <th>Paid Amount</th>
+                        <th>Due</th>
+                        <th>Status</th>
+                        <th>Payment Date</th>
+                        <th>Payment Method</th>
+                        <th>Transaction ID</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fee in fees %}
+                    {% set due = fee.amount - fee.paid_amount %}
+                    <tr>
+                        <td>₹{{ "%.2f"|format(fee.amount) }}</td>
+                        <td>{{ fee.due_date.strftime('%Y-%m-%d') if fee.due_date else 'N/A' }}</td>
+                        <td>₹{{ "%.2f"|format(fee.paid_amount) }}</td>
+                        <td><strong>₹{{ "%.2f"|format(due) }}</strong></td>
+                        <td>
+                            <span class="badge {% if fee.status == 'Paid' %}bg-success{% elif fee.status == 'Partial' %}bg-warning{% else %}bg-danger{% endif %}">
+                                {{ fee.status }}
+                            </span>
+                        </td>
+                        <td>{{ fee.payment_date.strftime('%Y-%m-%d %H:%M') if fee.payment_date else '-' }}</td>
+                        <td>{{ fee.payment_method or '-' }}</td>
+                        <td>{{ fee.transaction_id or '-' }}</td>
+                        <td>{{ fee.remarks or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-cash-stack" style="font-size: 4rem; opacity: 0.3;"></i>
+            <p class="text-muted mt-3">No fee records found for this student.</p>
+        </div>
+        {% endif %}
+        <div class="mt-3">
+            <a href="{{ url_for('admin_manage_fees') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Fee Management
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mt-4"><i class="bi bi-envelope-paper me-2"></i>Leave Application</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ url_for('student_dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Apply Leave</li>
+</ol>
+
+<div class="row">
+    <!-- Apply Leave Form -->
+    <div class="col-md-5">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-calendar-plus me-2"></i>New Leave Request
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('apply_leave') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" name="start_date" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" name="end_date" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Reason</label>
+                        <textarea name="reason" class="form-control" rows="4" placeholder="Enter reason for leave" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-send me-2"></i>Submit Application
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leave History -->
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <i class="bi bi-clock-history me-2"></i>My Leave History
+            </div>
+            <div class="card-body">
+                {% if leaves %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Approved By</th>
+                                <th>Applied On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for leave in leaves %}
+                            <tr>
+                                <td>{{ leave.start_date.strftime('%d-%m-%Y') }}</td>
+                                <td>{{ leave.end_date.strftime('%d-%m-%Y') }}</td>
+                                <td>{{ leave.reason }}</td>
+                                <td>
+                                    {% if leave.status == 'Pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% elif leave.status == 'Approved' %}
+                                        <span class="badge bg-success">Approved</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Rejected</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ leave.approver.full_name if leave.approver else '-' }}</td>
+                                <td>{{ leave.applied_on.strftime('%d-%m-%Y %H:%M') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-calendar-x fs-1 opacity-25"></i>
+                    <p class="mt-2 text-muted">No leave applications found.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

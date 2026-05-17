@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Events & Holidays</h1>
+<div class="row">
+    {% for e in events %}
+    <div class="col-md-4 mb-3">
+        <div class="card {% if e.event_type == 'Holiday' %}border-danger{% elif e.event_type == 'Exam' %}border-warning{% else %}border-primary{% endif %}">
+            <div class="card-header">{{ e.event_date.strftime('%d %B %Y') }}</div>
+            <div class="card-body"><h5>{{ e.title }}</h5><p>{{ e.description }}</p><span class="badge bg-secondary">{{ e.event_type }}</span></div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

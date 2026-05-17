@@ -7,6 +7,7 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
     position: relative;
+    cursor: pointer;
   }
   .stat-card::after {
     content: '';
@@ -48,16 +49,13 @@
     font-weight: 600;
     color: var(--text-muted);
   }
-  .server-status i {
-    font-size: 0.7rem;
-  }
   @media (max-width: 768px) {
     .stat-value { font-size: 1.8rem; }
     .quick-action-btn { padding: 0.75rem !important; }
   }
 </style>
 
-<!-- Welcome Row with Live Clock + Greeting -->
+<!-- Welcome Row with Live Clock -->
 <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
   <div>
     <h1 class="display-6 fw-bold mb-0">Admin Dashboard</h1>
@@ -76,10 +74,6 @@
         <i class="bi bi-clock me-1 text-primary"></i>
         <span id="liveTime" class="fw-semibold"></span>
       </div>
-      <div class="glass-card px-3 py-2 rounded-pill">
-        <i class="bi bi-cloud-sun me-1 text-warning"></i>
-        <span id="weatherStatus">Loading...</span>
-      </div>
     </div>
   </div>
 </div>
@@ -87,7 +81,7 @@
 <!-- Stats Row (Animated Counters) -->
 <div class="row g-4 mb-5">
   <div class="col-xl-3 col-md-6">
-    <div class="card stat-card border-0 shadow-sm h-100">
+    <div class="card stat-card border-0 shadow-sm h-100" onclick="window.location.href='{{ url_for('manage_users') }}'">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-start">
           <div>
@@ -105,7 +99,7 @@
     </div>
   </div>
   <div class="col-xl-3 col-md-6">
-    <div class="card stat-card border-0 shadow-sm h-100">
+    <div class="card stat-card border-0 shadow-sm h-100" onclick="window.location.href='{{ url_for('manage_users') }}'">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-start">
           <div>
@@ -123,7 +117,7 @@
     </div>
   </div>
   <div class="col-xl-3 col-md-6">
-    <div class="card stat-card border-0 shadow-sm h-100">
+    <div class="card stat-card border-0 shadow-sm h-100" onclick="window.location.href='{{ url_for('manage_programs') }}'">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-start">
           <div>
@@ -141,7 +135,7 @@
     </div>
   </div>
   <div class="col-xl-3 col-md-6">
-    <div class="card stat-card border-0 shadow-sm h-100">
+    <div class="card stat-card border-0 shadow-sm h-100" onclick="window.location.href='{{ url_for('admin_manage_fees') }}'">
       <div class="card-body">
         <div class="d-flex justify-content-between align-items-start">
           <div>
@@ -170,10 +164,7 @@
       <div class="card-header bg-transparent border-0 pt-3">
         <div class="d-flex justify-content-between align-items-center">
           <h5 class="mb-0 fw-semibold"><i class="bi bi-graph-up me-2 text-primary"></i>Fee Collection Trend (Monthly)</h5>
-          <select class="form-select form-select-sm w-auto" id="yearSelect">
-            <option value="2025">2025</option>
-            <option value="2024">2024</option>
-          </select>
+          <a href="{{ url_for('admin_fee_collection_report') }}" class="btn btn-sm btn-outline-primary">Detailed Report</a>
         </div>
       </div>
       <div class="card-body">
@@ -194,62 +185,40 @@
   </div>
 </div>
 
-<!-- Quick Actions + Recent Activity + System Status -->
-<div class="row g-4">
-  <!-- Quick Actions -->
-  <div class="col-lg-4">
-    <div class="card shadow-sm border-0 h-100">
+<!-- Quick Actions Grid (All New Modules) -->
+<div class="row g-4 mb-4">
+  <div class="col-12">
+    <div class="card shadow-sm border-0">
       <div class="card-header bg-transparent border-0 pt-3">
         <h5 class="mb-0 fw-semibold"><i class="bi bi-lightning-charge me-2 text-warning"></i>Quick Actions</h5>
       </div>
       <div class="card-body">
         <div class="row g-3">
-          <div class="col-6">
-            <a href="{{ url_for('manage_users') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50">
-              <i class="bi bi-person-plus-fill fs-3 text-primary"></i>
-              <div class="small fw-semibold mt-2">Add User</div>
-            </a>
-          </div>
-          <div class="col-6">
-            <a href="{{ url_for('manage_programs') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50">
-              <i class="bi bi-book-half fs-3 text-success"></i>
-              <div class="small fw-semibold mt-2">Manage Programs</div>
-            </a>
-          </div>
-          <div class="col-6">
-            <a href="{{ url_for('admin_manage_fees') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50">
-              <i class="bi bi-cash-stack fs-3 text-info"></i>
-              <div class="small fw-semibold mt-2">Fee Records</div>
-            </a>
-          </div>
-          <div class="col-6">
-            <a href="{{ url_for('send_sms_page') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50">
-              <i class="bi bi-chat-dots-fill fs-3 text-danger"></i>
-              <div class="small fw-semibold mt-2">Send SMS</div>
-            </a>
-          </div>
-          <div class="col-6">
-            <a href="{{ url_for('manage_timetable') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50">
-              <i class="bi bi-calendar-week fs-3 text-warning"></i>
-              <div class="small fw-semibold mt-2">Timetable</div>
-            </a>
-          </div>
-          <div class="col-6">
-            <a href="{{ url_for('admin_admissions') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50">
-              <i class="bi bi-envelope-paper fs-3 text-secondary"></i>
-              <div class="small fw-semibold mt-2">Admissions</div>
-            </a>
-          </div>
+          <div class="col-md-3 col-6"><a href="{{ url_for('manage_users') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50"><i class="bi bi-person-plus-fill fs-3 text-primary"></i><div class="small fw-semibold mt-2">Add User</div></a></div>
+          <div class="col-md-3 col-6"><a href="{{ url_for('manage_programs') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50"><i class="bi bi-collection fs-3 text-success"></i><div class="small fw-semibold mt-2">Programs</div></a></div>
+          <div class="col-md-3 col-6"><a href="{{ url_for('manage_subjects') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50"><i class="bi bi-journal-bookmark-fill fs-3 text-info"></i><div class="small fw-semibold mt-2">Subjects</div></a></div>
+          <div class="col-md-3 col-6"><a href="{{ url_for('manage_timetable') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50"><i class="bi bi-calendar-week fs-3 text-warning"></i><div class="small fw-semibold mt-2">Timetable</div></a></div>
+          <div class="col-md-3 col-6"><a href="{{ url_for('admin_manage_fees') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50"><i class="bi bi-cash-stack fs-3 text-danger"></i><div class="small fw-semibold mt-2">Fee Records</div></a></div>
+          <div class="col-md-3 col-6"><a href="{{ url_for('admin_hostel') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50"><i class="bi bi-building fs-3 text-secondary"></i><div class="small fw-semibold mt-2">Hostel</div></a></div>
+          <div class="col-md-3 col-6"><a href="{{ url_for('admin_transport') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50"><i class="bi bi-bus-front fs-3 text-success"></i><div class="small fw-semibold mt-2">Transport</div></a></div>
+          <div class="col-md-3 col-6"><a href="{{ url_for('admin_library') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50"><i class="bi bi-book fs-3 text-primary"></i><div class="small fw-semibold mt-2">Library</div></a></div>
+          <div class="col-md-3 col-6"><a href="{{ url_for('admin_placement') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50"><i class="bi bi-briefcase fs-3 text-info"></i><div class="small fw-semibold mt-2">Placement</div></a></div>
+          <div class="col-md-3 col-6"><a href="{{ url_for('admin_online_payments') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50"><i class="bi bi-credit-card fs-3 text-warning"></i><div class="small fw-semibold mt-2">Online Payments</div></a></div>
+          <div class="col-md-3 col-6"><a href="{{ url_for('admin_leave_requests') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50"><i class="bi bi-envelope fs-3 text-danger"></i><div class="small fw-semibold mt-2">Leave Requests</div></a></div>
+          <div class="col-md-3 col-6"><a href="{{ url_for('admin_complaints') }}" class="quick-action-btn d-block text-center text-decoration-none p-3 rounded-4 bg-light bg-opacity-50"><i class="bi bi-chat-left-text fs-3 text-secondary"></i><div class="small fw-semibold mt-2">Complaints</div></a></div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Recent Activity Feed -->
-  <div class="col-lg-4">
+<!-- Recent Activity + System Status -->
+<div class="row g-4">
+  <div class="col-lg-6">
     <div class="card shadow-sm border-0 h-100">
-      <div class="card-header bg-transparent border-0 pt-3">
+      <div class="card-header bg-transparent border-0 pt-3 d-flex justify-content-between align-items-center">
         <h5 class="mb-0 fw-semibold"><i class="bi bi-activity me-2 text-success"></i>Recent Activity</h5>
+        <a href="#" class="btn btn-sm btn-outline-secondary">View All</a>
       </div>
       <div class="card-body p-0">
         <div class="list-group list-group-flush">
@@ -270,29 +239,25 @@
             <div><strong>Event</strong> – Tech Fest scheduled for 15th May<br><small class="text-muted">3 days ago</small></div>
           </div>
         </div>
-        <div class="text-center p-3 border-top">
-          <a href="#" class="text-decoration-none small">View all activity <i class="bi bi-arrow-right"></i></a>
-        </div>
       </div>
     </div>
   </div>
 
-  <!-- System Status & Upcoming -->
-  <div class="col-lg-4">
+  <div class="col-lg-6">
     <div class="card shadow-sm border-0 h-100">
       <div class="card-header bg-transparent border-0 pt-3">
         <h5 class="mb-0 fw-semibold"><i class="bi bi-hdd-stack me-2 text-secondary"></i>System Status</h5>
       </div>
       <div class="card-body">
-        <div class="server-status mb-3">
+        <div class="mb-3">
           <div class="d-flex justify-content-between small"><span>Server Load</span><span>32%</span></div>
           <div class="progress progress-thin mt-1"><div class="progress-bar bg-success" style="width:32%"></div></div>
         </div>
-        <div class="server-status mb-3">
+        <div class="mb-3">
           <div class="d-flex justify-content-between small"><span>Database Usage</span><span>58%</span></div>
           <div class="progress progress-thin mt-1"><div class="progress-bar bg-info" style="width:58%"></div></div>
         </div>
-        <div class="server-status mb-3">
+        <div class="mb-3">
           <div class="d-flex justify-content-between small"><span>Storage</span><span>2.4 GB / 10 GB</span></div>
           <div class="progress progress-thin mt-1"><div class="progress-bar bg-warning" style="width:24%"></div></div>
         </div>
@@ -310,13 +275,13 @@
   </div>
 </div>
 
-<!-- Recent Notices Section (replaces old notices card but with better design) -->
+<!-- Recent Notices Section -->
 <div class="row mt-4">
   <div class="col-12">
     <div class="card shadow-sm border-0">
       <div class="card-header bg-transparent border-0 pt-3 d-flex justify-content-between align-items-center">
         <h5 class="mb-0 fw-semibold"><i class="bi bi-megaphone me-2 text-primary"></i>Recent Notices</h5>
-        <a href="{{ url_for('manage_notices') }}" class="btn btn-sm btn-outline-primary rounded-pill">View All</a>
+        <a href="{{ url_for('manage_notices') }}" class="btn btn-sm btn-outline-primary rounded-pill">Manage Notices</a>
       </div>
       <div class="card-body">
         {% if notices %}
@@ -357,9 +322,6 @@
   updateDateTime();
   setInterval(updateDateTime, 1000);
 
-  // Simulated weather (could be replaced with real API)
-  document.getElementById('weatherStatus').innerHTML = '<i class="bi bi-sun"></i> 28°C Sunny';
-
   // Animated counters
   const counters = document.querySelectorAll('.counter-value');
   counters.forEach(counter => {
@@ -378,7 +340,7 @@
     updateCounter();
   });
 
-  // Fetch fee summary from API and update progress bar & total
+  // Fetch fee summary from API
   fetch('/api/fee-summary')
     .then(res => res.json())
     .catch(() => ({ total_fees: 1250000, total_collected: 845000 }))
@@ -391,7 +353,7 @@
       document.getElementById('feeSubtext').innerHTML = `${percent.toFixed(1)}% of total fees collected (₹${total.toLocaleString()})`;
     });
 
-  // Fee Collection Chart (Mock Data)
+  // Fee Collection Chart (Mock Data, but can be made dynamic)
   const feeOptions = {
     series: [{
       name: 'Fees Collected',
@@ -409,7 +371,7 @@
   const feeChart = new ApexCharts(document.querySelector("#feeChart"), feeOptions);
   feeChart.render();
 
-  // Program Enrollment Chart (Pie)
+  // Program Enrollment Chart (Pie) from API
   fetch('/api/program-enrollment')
     .then(res => res.json())
     .catch(() => ({ series: [45, 32, 28], labels: ['BCA', 'BBA', 'BSc CS'] }))

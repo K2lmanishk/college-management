@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Student Complaints</h1>
+<table class="table table-bordered"><thead class="table-dark"><tr><th>Student</th><th>Subject</th><th>Message</th><th>Status</th><th>Action</th></tr></thead>
+<tbody>{% for c in complaints %}<tr><td>{{ c.student.user.full_name }}</td><td>{{ c.subject }}</td><td>{{ c.message[:50] }}</td><td>{{ c.status }}</td>
+<td><button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#replyModal{{ c.id }}">Reply</button>
+<div class="modal fade" id="replyModal{{ c.id }}"><div class="modal-dialog"><div class="modal-content">
+    <form method="POST" action="{{ url_for('reply_complaint', complaint_id=c.id) }}">
+        <div class="modal-body"><textarea name="reply" class="form-control" rows="3" placeholder="Your reply..." required></textarea></div>
+        <div class="modal-footer"><button class="btn btn-primary">Send Reply</button></div>
+    </form>
+</div></div></div></td></tr>{% endfor %}</tbody></table>
+{% endblock %}

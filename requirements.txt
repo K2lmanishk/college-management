@@ -1,14 +1,36 @@
+# Core Flask & Extensions
 Flask==3.0.0
 Flask-SQLAlchemy==3.1.1
 Flask-Login==0.6.3
 Werkzeug==3.0.1
 python-dotenv==1.0.0
+
+# Database
 SQLAlchemy==2.0.23
-Jinja2==3.1.2
+psycopg2-binary==2.9.9
+
+# Authentication & Security
+itsdangerous==2.1.2
+click==8.1.7
+
+# QR Code & Image Processing
 qrcode==7.4.2
 pillow==10.2.0
+
+# Deployment
 gunicorn==21.2.0
+
+# SMS (Twilio)
 twilio==9.4.0
-psycopg2-binary
-cloudinary==1.44.2          # <-- add this line
-weasyprint==62.3            # if you are using PDF generation
+
+# Cloud Storage (Cloudinary)
+cloudinary==1.44.2
+
+# PDF Generation
+weasyprint==62.3
+
+# Payment Gateway
+razorpay==1.4.2
+
+# Additional (if any)
+Jinja2==3.1.2

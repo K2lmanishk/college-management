@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Library Management</h1>
+<ul class="nav nav-tabs"><li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#books">Books</button></li>
+<li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#issue">Issue Book</button></li>
+<li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#returns">Return Book</button></li></ul>
+<div class="tab-content mt-3">
+    <div class="tab-pane fade show active" id="books">
+        <div class="card"><div class="card-header bg-primary text-white">Add Book</div><div class="card-body">
+            <form method="POST" action="{{ url_for('add_book') }}">
+                <div class="row"><div class="col-md-3"><input name="title" class="form-control" placeholder="Title" required></div>
+                <div class="col-md-2"><input name="author" class="form-control" placeholder="Author"></div>
+                <div class="col-md-2"><input name="isbn" class="form-control" placeholder="ISBN"></div>
+                <div class="col-md-2"><input name="total_copies" class="form-control" placeholder="Copies" type="number"></div>
+                <div class="col-md-3"><button class="btn btn-primary">Add Book</button></div></div>
+            </form>
+        </div></div>
+        <table class="table table-bordered mt-3"><thead class="table-dark"><tr><th>Title</th><th>Author</th><th>ISBN</th><th>Total</th><th>Available</th></tr></thead>
+        <tbody>{% for b in books %}<tr><td>{{ b.title }}</td><td>{{ b.author }}</td><td>{{ b.isbn }}</td><td>{{ b.total_copies }}</td><td>{{ b.available_copies }}</td></tr>{% endfor %}</tbody></table>
+    </div>
+    <div class="tab-pane fade" id="issue">
+        <div class="card"><div class="card-header bg-success text-white">Issue Book</div><div class="card-body">
+            <form method="POST" action="{{ url_for('issue_book') }}">
+                <div class="row"><div class="col-md-4"><select name="book_id" class="form-select" required>{% for b in books if b.available_copies >0 %}<option value="{{ b.id }}">{{ b.title }} ({{ b.available_copies }} left)</option>{% endfor %}</select></div>
+                <div class="col-md-4"><select name="student_id" class="form-select" required>{% for s in students %}<option value="{{ s.id }}">{{ s.user.full_name }} ({{ s.roll_no }})</option>{% endfor %}</select></div>
+                <div class="col-md-3"><input name="due_date" type="date" class="form-control" required></div>
+                <div class="col-md-1"><button class="btn btn-success">Issue</button></div></div>
+            </form>
+        </div></div>
+        <table class="table table-bordered mt-3"><thead class="table-dark"><tr><th>Book</th><th>Student</th><th>Issue Date</th><th>Due Date</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>{% for i in issues if i.status == 'Issued' %}<tr><td>{{ i.book.title }}</td><td>{{ i.student.user.full_name }}</td><td>{{ i.issue_date.strftime('%d-%m-%Y') }}</td><td>{{ i.due_date.strftime('%d-%m-%Y') }}</td><td>{{ i.status }}</td><td><a href="{{ url_for('return_book', issue_id=i.id) }}" class="btn btn-sm btn-warning">Return</a></td></tr>{% endfor %}</tbody></table>
+    </div>
+    <div class="tab-pane fade" id="returns"><h5>Returned Books History</h5>
+        <table class="table"><thead><tr><th>Book</th><th>Student</th><th>Return Date</th><th>Fine</th></tr></thead>
+        <tbody>{% for i in issues if i.status == 'Returned' %}<tr><td>{{ i.book.title }}</td><td>{{ i.student.user.full_name }}</td><td>{{ i.return_date.strftime('%d-%m-%Y') }}</td><td>₹{{ i.fine }}</td></tr>{% endfor %}</tbody></table>
+    </div>
+</div>
+{% endblock %}

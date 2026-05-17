@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Hostel Management</h1>
+<ul class="nav nav-tabs" id="hostelTab" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#hostels">Hostels</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#rooms">Rooms</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#allocate">Allocate</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#allocations">Allocations</button></li>
+</ul>
+<div class="tab-content mt-3">
+    <!-- Hostels Tab -->
+    <div class="tab-pane fade show active" id="hostels">
+        <div class="card"><div class="card-header bg-primary text-white">Add Hostel</div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('add_hostel') }}">
+                <div class="row"><div class="col-md-4"><input name="name" class="form-control" placeholder="Hostel Name" required></div>
+                <div class="col-md-2"><input name="total_rooms" class="form-control" placeholder="Total Rooms" required></div>
+                <div class="col-md-3"><input name="warden_name" class="form-control" placeholder="Warden Name"></div>
+                <div class="col-md-3"><input name="warden_phone" class="form-control" placeholder="Warden Phone"></div>
+                <div class="col-md-12 mt-2"><button class="btn btn-primary">Add Hostel</button></div></div>
+            </form>
+        </div></div>
+        <table class="table table-bordered mt-3"><thead class="table-dark"><tr><th>Hostel</th><th>Total Rooms</th><th>Warden</th><th>Phone</th></tr></thead>
+        <tbody>{% for h in hostels %}<tr><td>{{ h.name }}</td><td>{{ h.total_rooms }}</td><td>{{ h.warden_name }}</td><td>{{ h.warden_phone }}</td></tr>{% endfor %}</tbody></table>
+    </div>
+    <!-- Rooms Tab -->
+    <div class="tab-pane fade" id="rooms">
+        <div class="card"><div class="card-header bg-primary text-white">Add Room</div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('add_hostel_room') }}">
+                <div class="row"><div class="col-md-3"><select name="hostel_id" class="form-select" required>{% for h in hostels %}<option value="{{ h.id }}">{{ h.name }}</option>{% endfor %}</select></div>
+                <div class="col-md-2"><input name="room_number" class="form-control" placeholder="Room No" required></div>
+                <div class="col-md-2"><input name="capacity" class="form-control" placeholder="Capacity" required></div>
+                <div class="col-md-3"><input name="rent_per_month" class="form-control" placeholder="Rent/Month" required></div>
+                <div class="col-md-2"><button class="btn btn-primary">Add Room</button></div></div>
+            </form>
+        </div></div>
+        <table class="table table-bordered mt-3"><thead class="table-dark"><tr><th>Hostel</th><th>Room No</th><th>Capacity</th><th>Occupied</th><th>Rent</th></tr></thead>
+        <tbody>{% for r in rooms %}<tr><td>{{ r.hostel.name }}</td><td>{{ r.room_number }}</td><td>{{ r.capacity }}</td><td>{{ r.occupied }}</td><td>₹{{ r.rent_per_month }}</td></tr>{% endfor %}</tbody></table>
+    </div>
+    <!-- Allocate Tab -->
+    <div class="tab-pane fade" id="allocate">
+        <div class="card"><div class="card-header bg-success text-white">Allocate Room to Student</div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('allocate_hostel') }}">
+                <div class="row"><div class="col-md-4"><select name="student_id" class="form-select" required>{% for s in students %}<option value="{{ s.id }}">{{ s.user.full_name }} ({{ s.roll_no }})</option>{% endfor %}</select></div>
+                <div class="col-md-4"><select name="room_id" class="form-select" required>{% for r in rooms %}<option value="{{ r.id }}">{{ r.hostel.name }} - Room {{ r.room_number }} ({{ r.occupied }}/{{ r.capacity }})</option>{% endfor %}</select></div>
+                <div class="col-md-4"><button class="btn btn-success">Allocate</button></div></div>
+            </form>
+        </div></div>
+    </div>
+    <!-- Allocations Tab -->
+    <div class="tab-pane fade" id="allocations">
+        <table class="table table-bordered"><thead class="table-dark"><tr><th>Student</th><th>Hostel</th><th>Room</th><th>Allocated Date</th><th>Status</th></tr></thead>
+        <tbody>{% for a in allocations %}<tr><td>{{ a.student.user.full_name }}</td><td>{{ a.room.hostel.name }}</td><td>{{ a.room.room_number }}</td><td>{{ a.allocated_date.strftime('%d-%m-%Y') }}</td><td>{{ a.status }}</td></tr>{% endfor %}</tbody></table>
+    </div>
+</div>
+{% endblock %}

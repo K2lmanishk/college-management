@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>My Students</h1>
+<table class="table table-bordered"><thead class="table-dark"><tr><th>Roll No</th><th>Student Name</th><th>Program</th><th>Semester</th><th>Phone</th></tr></thead>
+<tbody>{% for s in students %}<tr><td>{{ s.roll_no }}</td><td>{{ s.user.full_name }}</td><td>{{ s.program.name if s.program else '-' }}</td><td>{{ s.semester }}</td><td>{{ s.phone }}</td></tr>{% endfor %}</tbody></table>
+{% endblock %}

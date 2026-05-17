@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Online Payments – Transaction Log</h1>
+<table class="table"><thead><tr><th>Student</th><th>Amount</th><th>Transaction ID</th><th>Date</th><th>Status</th></tr></thead>
+<tbody>{% for fee in fees if fee.transaction_id %}<tr><td>{{ fee.student.user.full_name }}</td><td>₹{{ fee.paid_amount }}</td><td>{{ fee.transaction_id }}</td><td>{{ fee.payment_date.strftime('%d-%m-%Y') if fee.payment_date else '-' }}</td><td>{{ fee.status }}</td></tr>{% endfor %}</tbody></table>
+{% endblock %}

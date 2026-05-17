@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Fee Collection Report</h1>
+<canvas id="feeChart" height="100"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('feeChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: { labels: {{ months|tojson }}, datasets: [{ label: 'Fee Collected (₹)', data: {{ collections|tojson }}, backgroundColor: '#4e73df' }] },
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+});
+</script>
+<table class="table table-bordered mt-3"><thead class="table-dark"><tr><th>Month</th><th>Amount (₹)</th></tr></thead>
+<tbody>{% for i in range(months|length) %}<tr><td>{{ months[i] }}</td><td>{{ collections[i] }}</td></tr>{% endfor %}</tbody></table>
+<a href="{{ url_for('export_fee_report') }}" class="btn btn-primary">Export as CSV</a>
+{% endblock %}

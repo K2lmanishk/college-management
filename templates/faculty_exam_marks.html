@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Enter Exam Marks</h1>
+<form method="POST">
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <select name="exam_id" class="form-select" required>
+                <option value="">Select Exam</option>
+                {% for e in exams %}
+                <option value="{{ e.id }}">{{ e.name }} - {{ e.subject.name }} ({{ e.semester }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-info" onclick="loadStudents()">Load Students</button>
+        </div>
+    </div>
+    <div id="studentMarksContainer" style="display:none;">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-dark"><tr><th>Roll No</th><th>Student Name</th><th>Marks (Max: <span id="maxMarksSpan">0</span>)</th></tr></thead>
+                <tbody id="studentMarksBody"></tbody>
+            </table>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Marks</button>
+    </div>
+</form>
+<script>
+function loadStudents() {
+    let examId = document.querySelector('select[name="exam_id"]').value;
+    if(!examId) { alert('Select exam'); return; }
+    fetch(`/api/get_exam_students/${examId}`).then(res=>res.json()).then(data=>{
+        document.getElementById('maxMarksSpan').innerText = data.max_marks;
+        let html = '';
+        data.students.forEach(s=>{
+            html += `<tr><td>${s.roll_no}</td><td>${s.name}</td><td><input type="number" name="marks_${s.id}" class="form-control" min="0" max="${data.max_marks}" step="0.5" value="${s.marks || ''}"></td></tr>`;
+        });
+        document.getElementById('studentMarksBody').innerHTML = html;
+        document.getElementById('studentMarksContainer').style.display = 'block';
+    });
+}
+</script>
+{% endblock %}

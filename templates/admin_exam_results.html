@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mt-4"><i class="bi bi-file-text me-2"></i>{{ exam.name }} – Results</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('manage_exams') }}">Exams</a></li>
+    <li class="breadcrumb-item active">Results</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <i class="bi bi-info-circle me-2"></i>Exam Details
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3"><strong>Subject:</strong> {{ exam.subject.name }} ({{ exam.subject.code }})</div>
+            <div class="col-md-3"><strong>Program:</strong> {{ exam.program.name }}</div>
+            <div class="col-md-2"><strong>Semester:</strong> {{ exam.semester }}</div>
+            <div class="col-md-2"><strong>Max Marks:</strong> {{ exam.max_marks }}</div>
+            <div class="col-md-2"><strong>Date:</strong> {{ exam.exam_date.strftime('%d-%m-%Y') }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <i class="bi bi-table me-2"></i>Student Marks
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Student Name</th>
+                        <th>Obtained Marks</th>
+                        <th>Grade</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    {% set result = result_dict.get(student.id) %}
+                    <tr>
+                        <td>{{ student.roll_no }}</small></td>
+                        <td>{{ student.user.full_name }}</small></td>
+                        <td>
+                            {% if result %}
+                                {{ result.obtained_marks }}
+                            {% else %}
+                                <span class="text-muted">Not entered</span>
+                            {% endif %}
+                        </small></td>
+                        <td>
+                            {% if result %}
+                                {{ result.grade }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </small></td>
+                        <td>
+                            {% if result %}
+                                {% if result.obtained_marks >= exam.passing_marks %}
+                                    <span class="badge bg-success">Pass</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Fail</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge bg-secondary">Pending</span>
+                            {% endif %}
+                        </small></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a href="{{ url_for('exam_results_pdf', exam_id=exam.id) }}" class="btn btn-primary" target="_blank">
+            <i class="bi bi-file-pdf me-2"></i>Download PDF Report
+        </a>
+        <a href="{{ url_for('manage_exams') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Exams
+        </a>
+    </div>
+</div>
+{% endblock %}

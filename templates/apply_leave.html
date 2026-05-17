@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Apply for Leave</h1>
+<div class="row"><div class="col-md-5">
+    <div class="card"><div class="card-header bg-primary text-white">New Leave Application</div><div class="card-body">
+        <form method="POST">
+            <div class="mb-2"><input name="start_date" type="date" class="form-control" required></div>
+            <div class="mb-2"><input name="end_date" type="date" class="form-control" required></div>
+            <div class="mb-2"><textarea name="reason" class="form-control" rows="3" placeholder="Reason" required></textarea></div>
+            <button class="btn btn-primary">Submit</button>
+        </form>
+    </div></div>
+</div><div class="col-md-7">
+    <div class="card"><div class="card-header bg-info text-white">My Leave History</div><div class="card-body">
+        <table class="table"><thead><tr><th>From</th><th>To</th><th>Reason</th><th>Status</th><th>Approved By</th></tr></thead>
+        <tbody>{% for l in leaves %}<tr><td>{{ l.start_date.strftime('%d-%m-%Y') }}</td><td>{{ l.end_date.strftime('%d-%m-%Y') }}</td><td>{{ l.reason }}</td><td>{{ l.status }}</td><td>{{ l.approver.full_name if l.approver else '-' }}</td></tr>{% endfor %}</tbody></table>
+    </div></div>
+</div></div>
+{% endblock %}

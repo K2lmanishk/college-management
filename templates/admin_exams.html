@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Manage Exams</h1>
+<div class="row">
+    <div class="col-md-5">
+        <div class="card"><div class="card-header bg-primary text-white">Create New Exam</div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('add_exam') }}">
+                <div class="mb-2"><input type="text" name="name" class="form-control" placeholder="Exam Name" required></div>
+                <div class="mb-2"><select name="program_id" class="form-select" required>{% for p in programs %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}</select></div>
+                <div class="mb-2"><select name="semester" class="form-select" required>{% for s in semesters %}<option>{{ s }}</option>{% endfor %}</select></div>
+                <div class="mb-2"><select name="subject_id" class="form-select" required>{% for sub in subjects %}<option value="{{ sub.id }}">{{ sub.name }} ({{ sub.code }})</option>{% endfor %}</select></div>
+                <div class="mb-2"><input type="date" name="exam_date" class="form-control" required></div>
+                <div class="mb-2"><input type="number" name="max_marks" class="form-control" placeholder="Max Marks" value="100" required></div>
+                <div class="mb-2"><input type="number" name="passing_marks" class="form-control" placeholder="Passing Marks" value="40"></div>
+                <div class="mb-2"><input type="text" name="academic_year" class="form-control" value="{{ academic_year }}"></div>
+                <button type="submit" class="btn btn-success">Create Exam</button>
+            </form>
+        </div></div>
+    </div>
+    <div class="col-md-7">
+        <div class="card"><div class="card-header bg-info text-white">Existing Exams</div>
+        <div class="card-body"><div class="table-responsive"><table class="table table-bordered">
+            <thead class="table-dark"><tr><th>Exam</th><th>Program</th><th>Sem</th><th>Subject</th><th>Date</th><th>Max</th><th>Actions</th></tr></thead>
+            <tbody>{% for e in exams %}</td>
+                <td>{{ e.name }}</small></td><td>{{ e.program.name }}</td><td>{{ e.semester }}</td><td>{{ e.subject.name }}</td>
+                <td>{{ e.exam_date.strftime('%d-%m-%Y') }}</td><td>{{ e.max_marks }}</td>
+                <td><a href="{{ url_for('view_exam_results', exam_id=e.id) }}" class="btn btn-sm btn-primary">Results</a>
+                    <button class="btn btn-sm btn-danger" onclick="deleteExam({{ e.id }})">Delete</button></td>
+            </tr>{% endfor %}</tbody>
+        </table></div></div></div>
+    </div>
+</div>
+<script>
+function deleteExam(id){ if(confirm('Delete exam?')) fetch('/admin/exam/delete/'+id,{method:'POST'}).then(()=>location.reload()); }
+</script>
+{% endblock %}

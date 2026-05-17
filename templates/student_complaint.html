@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Raise a Complaint</h1>
+<div class="row"><div class="col-md-5">
+    <div class="card"><div class="card-header bg-danger text-white">New Complaint</div><div class="card-body">
+        <form method="POST">
+            <div class="mb-2"><input name="subject" class="form-control" placeholder="Subject" required></div>
+            <div class="mb-2"><textarea name="message" class="form-control" rows="4" placeholder="Describe your issue" required></textarea></div>
+            <button class="btn btn-danger">Submit</button>
+        </form>
+    </div></div>
+</div><div class="col-md-7">
+    <div class="card"><div class="card-header bg-info text-white">My Complaints</div><div class="card-body">
+        <table class="table"><thead><tr><th>Subject</th><th>Message</th><th>Status</th><th>Reply</th><th>Date</th></tr></thead>
+        <tbody>{% for c in complaints %}<tr><td>{{ c.subject }}</td><td>{{ c.message }}</td><td>{{ c.status }}</td><td>{{ c.reply or '-' }}</td><td>{{ c.created_at.strftime('%d-%m-%Y') }}</td></tr>{% endfor %}</tbody></table>
+    </div></div>
+</div></div>
+{% endblock %}

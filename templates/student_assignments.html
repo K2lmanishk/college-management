@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Study Materials / Assignments</h1>
+<div class="row">
+    {% for m in materials %}
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-header bg-info text-white">{{ m.title }}</div>
+            <div class="card-body"><p>{{ m.description }}</p><p><small>Uploaded by: {{ m.faculty.user.full_name }}</small></p><a href="{{ m.file_path }}" class="btn btn-primary" download>Download</a></div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

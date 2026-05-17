@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>My Exam Results</h1>
+<div class="card mb-4"><div class="card-header bg-primary text-white">Overall Performance</div>
+<div class="card-body"><h3>Total: {{ "%.2f"|format(overall_percent) }}% <span class="badge bg-success">{{ overall_grade }}</span></h3></div></div>
+<div class="table-responsive"><table class="table table-bordered">
+    <thead class="table-dark"><tr><th>Exam</th><th>Subject</th><th>Date</th><th>Obtained</th><th>Max</th><th>%</th><th>Grade</th><th>Status</th></tr></thead>
+    <tbody>{% for r in results %}<tr>
+        <td>{{ r.exam.name }}</td><td>{{ r.exam.subject.name }}</td><td>{{ r.exam.exam_date.strftime('%d-%m-%Y') }}</td>
+        <td>{{ r.obtained_marks }}</td><td>{{ r.exam.max_marks }}</td>
+        <td>{{ "%.1f"|format((r.obtained_marks/r.exam.max_marks)*100) }}%</td>
+        <td><span class="badge bg-{{ 'success' if r.grade not in ['F','D'] else 'danger' }}">{{ r.grade }}</span></td>
+        <td>{% if r.obtained_marks >= r.exam.passing_marks %}✅ Pass{% else %}❌ Fail{% endif %}</td>
+    </tr>{% endfor %}</tbody>
+</table></div>
+{% endblock %}

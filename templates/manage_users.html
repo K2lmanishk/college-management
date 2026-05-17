@@ -29,19 +29,20 @@
                         </select>
                     </div>
 
-                    <!-- Student fields -->
+                    <!-- Student fields (college version) -->
                     <div id="studentFields" style="display:none;">
                         <div class="mb-3"><label>Roll Number</label><input type="text" class="form-control" name="roll_no"></div>
                         <div class="mb-3"><label>Program</label>
                             <select class="form-select" name="program_id">
                                 <option value="">Select Program</option>
                                 {% for p in programs %}
-                                <option value="{{ p.id }}">{{ p.name }}</option>
+                                <option value="{{ p.id }}">{{ p.name }} ({{ p.code }})</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="mb-3"><label>Semester</label>
                             <select class="form-select" name="semester">
+                                <option value="">Select Semester</option>
                                 {% for sem in semesters %}
                                 <option value="{{ sem }}">{{ sem }}</option>
                                 {% endfor %}
@@ -77,7 +78,14 @@
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
                         <thead class="table-dark">
-                            <tr><th>Username</th><th>Full Name</th><th>Email</th><th>Role</th><th>Semester/Program</th><th>Actions</th></tr>
+                            <tr>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Program/Semester</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody>
                             {% for user in users %}
@@ -88,7 +96,8 @@
                                 <td><span class="badge bg-{{ 'danger' if user.role=='admin' else 'success' if user.role=='faculty' else 'info' }}">{{ user.role|capitalize }}</span></td>
                                 <td>
                                     {% if user.student_profile %}
-                                        {{ user.student_profile.semester }} / {{ user.student_profile.program.name if user.student_profile.program else '-' }}
+                                        {{ user.student_profile.program.name if user.student_profile.program else '-' }} /
+                                        {{ user.student_profile.semester or '-' }}
                                     {% else %}
                                         -
                                     {% endif %}
@@ -119,40 +128,80 @@
             <form method="POST" id="editUserForm">
                 <div class="modal-body">
                     <input type="hidden" name="user_id" id="editUserId">
-                    <div class="mb-3"><label>Full Name</label><input type="text" class="form-control" name="full_name" id="editFullName" required></div>
-                    <div class="mb-3"><label>Username</label><input type="text" class="form-control" name="username" id="editUsername" required></div>
-                    <div class="mb-3"><label>New Password (leave blank to keep current)</label><input type="password" class="form-control" name="new_password" id="editNewPassword" minlength="6">
+                    <div class="mb-3">
+                        <label>Full Name</label>
+                        <input type="text" class="form-control" name="full_name" id="editFullName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Username</label>
+                        <input type="text" class="form-control" name="username" id="editUsername" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>New Password (leave blank to keep current)</label>
+                        <input type="password" class="form-control" name="new_password" id="editNewPassword" minlength="6">
                         <small class="text-muted">Minimum 6 characters. Only fill if you want to reset the password.</small>
                     </div>
 
+                    <!-- Student fields (college version) -->
                     <div id="editStudentFields" style="display:none;">
-                        <div class="mb-3"><label>Roll Number</label><input type="text" class="form-control" name="roll_no" id="editRollNo"></div>
-                        <div class="mb-3"><label>Class</label><select class="form-select" name="class_name" id="editClassName">
-                            <option value="">Select Class</option>
-                            <option value="Class 1">Class 1</option><option value="Class 2">Class 2</option><option value="Class 3">Class 3</option>
-                            <option value="Class 4">Class 4</option><option value="Class 5">Class 5</option><option value="Class 6">Class 6</option>
-                            <option value="Class 7">Class 7</option><option value="Class 8">Class 8</option><option value="Class 9">Class 9</option>
-                            <option value="Class 10">Class 10</option>
-                            <option value="Class 11 Science">Class 11 Science</option><option value="Class 11 Commerce">Class 11 Commerce</option><option value="Class 11 Arts">Class 11 Arts</option>
-                            <option value="Class 12 Science">Class 12 Science</option><option value="Class 12 Commerce">Class 12 Commerce</option><option value="Class 12 Arts">Class 12 Arts</option>
-                        </select></div>
-                        <div class="mb-3"><label>Stream</label><select class="form-select" name="course_id" id="editCourseId">
-                            <option value="">Select Stream</option>
-                            {% for course in courses %}
-                            <option value="{{ course.id }}">{{ course.name }}</option>
-                            {% endfor %}
-                        </select></div>
-                        <div class="mb-3"><label>Date of Birth</label><input type="date" class="form-control" name="dob" id="editDob"></div>
-                        <div class="mb-3"><label>Phone</label><input type="text" class="form-control" name="phone" id="editPhone"></div>
-                        <div class="mb-3"><label>Address</label><textarea class="form-control" name="address" id="editAddress"></textarea></div>
-                        <div class="mb-3"><label>Parent Contact</label><input type="text" class="form-control" name="parent_contact" id="editParentContact"></div>
+                        <div class="mb-3">
+                            <label>Roll Number</label>
+                            <input type="text" class="form-control" name="roll_no" id="editRollNo">
+                        </div>
+                        <div class="mb-3">
+                            <label>Program</label>
+                            <select class="form-select" name="program_id" id="editProgramId">
+                                <option value="">Select Program</option>
+                                {% for p in programs %}
+                                <option value="{{ p.id }}">{{ p.name }} ({{ p.code }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Semester</label>
+                            <select class="form-select" name="semester" id="editSemester">
+                                <option value="">Select Semester</option>
+                                {% for sem in semesters %}
+                                <option value="{{ sem }}">{{ sem }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label>Date of Birth</label>
+                            <input type="date" class="form-control" name="dob" id="editDob">
+                        </div>
+                        <div class="mb-3">
+                            <label>Phone</label>
+                            <input type="text" class="form-control" name="phone" id="editPhone">
+                        </div>
+                        <div class="mb-3">
+                            <label>Address</label>
+                            <textarea class="form-control" name="address" id="editAddress"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label>Parent Contact</label>
+                            <input type="text" class="form-control" name="parent_contact" id="editParentContact">
+                        </div>
                     </div>
 
+                    <!-- Faculty fields -->
                     <div id="editFacultyFields" style="display:none;">
-                        <div class="mb-3"><label>Department</label><input type="text" class="form-control" name="department" id="editDepartment"></div>
-                        <div class="mb-3"><label>Designation</label><input type="text" class="form-control" name="designation" id="editDesignation"></div>
-                        <div class="mb-3"><label>Qualification</label><input type="text" class="form-control" name="qualification" id="editQualification"></div>
-                        <div class="mb-3"><label>Joining Date</label><input type="date" class="form-control" name="joining_date" id="editJoiningDate"></div>
+                        <div class="mb-3">
+                            <label>Department</label>
+                            <input type="text" class="form-control" name="department" id="editDepartment">
+                        </div>
+                        <div class="mb-3">
+                            <label>Designation</label>
+                            <input type="text" class="form-control" name="designation" id="editDesignation">
+                        </div>
+                        <div class="mb-3">
+                            <label>Qualification</label>
+                            <input type="text" class="form-control" name="qualification" id="editQualification">
+                        </div>
+                        <div class="mb-3">
+                            <label>Joining Date</label>
+                            <input type="date" class="form-control" name="joining_date" id="editJoiningDate">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -174,11 +223,18 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" id="credUserId">
-                <div class="mb-3"><label><strong>Username</strong></label><p id="credUsername" class="form-control-plaintext"></p></div>
-                <div class="mb-3"><label><strong>New Password (generated)</strong></label><p id="credPassword" class="form-control-plaintext text-monospace"></p>
+                <div class="mb-3">
+                    <label><strong>Username</strong></label>
+                    <p id="credUsername" class="form-control-plaintext"></p>
+                </div>
+                <div class="mb-3">
+                    <label><strong>New Password (generated)</strong></label>
+                    <p id="credPassword" class="form-control-plaintext text-monospace"></p>
                     <small class="text-muted">Copy this password and give it to the user.</small>
                 </div>
-                <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> Each time you click "Reset Password", a brand new random password will be generated.</div>
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> Each time you click "Reset Password", a brand new random password will be generated.
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -217,7 +273,7 @@
         }
     }
 
-    // Edit user: fetch data and set form action correctly
+    // Edit user: fetch data and populate college fields
     function editUser(userId) {
         fetch('/admin/user/get/' + userId)
             .then(response => response.json())
@@ -229,16 +285,15 @@
                 document.getElementById('editUserId').value = data.id;
                 document.getElementById('editFullName').value = data.full_name;
                 document.getElementById('editUsername').value = data.username;
-                // CRITICAL: set form action to the correct edit endpoint
                 document.getElementById('editUserForm').action = '/admin/user/edit/' + data.id;
-                document.getElementById('editNewPassword').value = ''; // clear password field
+                document.getElementById('editNewPassword').value = '';
 
                 if (data.role === 'student') {
                     document.getElementById('editStudentFields').style.display = 'block';
                     document.getElementById('editFacultyFields').style.display = 'none';
                     document.getElementById('editRollNo').value = data.roll_no || '';
-                    document.getElementById('editClassName').value = data.class_name || '';
-                    document.getElementById('editCourseId').value = data.course_id || '';
+                    document.getElementById('editProgramId').value = data.program_id || '';
+                    document.getElementById('editSemester').value = data.semester || '';
                     document.getElementById('editDob').value = data.dob || '';
                     document.getElementById('editPhone').value = data.phone || '';
                     document.getElementById('editAddress').value = data.address || '';

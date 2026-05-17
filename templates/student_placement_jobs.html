@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Placement Jobs</h1>
+<div class="row">
+    {% for job in jobs %}
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header bg-primary text-white">{{ job.company }}</div>
+            <div class="card-body"><h5>{{ job.title }}</h5><p>{{ job.description[:150] }}</p><p><strong>Eligibility:</strong> {{ job.eligibility }}</p><p><strong>Last Date:</strong> {{ job.last_date.strftime('%d-%m-%Y') }}</p>
+            {% if job.id in applied_ids %}<span class="badge bg-success">Applied</span>{% else %}<a href="{{ url_for('student_apply_job', job_id=job.id) }}" class="btn btn-sm btn-success">Apply Now</a>{% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

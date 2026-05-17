@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>My Library Books</h1>
+<table class="table table-bordered"><thead class="table-dark"><tr><th>Book Title</th><th>Author</th><th>Issue Date</th><th>Due Date</th><th>Fine</th><th>Status</th></tr></thead>
+<tbody>{% for i in issues %}<tr><td>{{ i.book.title }}</td><td>{{ i.book.author }}</td><td>{{ i.issue_date.strftime('%d-%m-%Y') }}</td><td>{{ i.due_date.strftime('%d-%m-%Y') }}</td><td>₹{{ i.fine }}</td><td>{{ i.status }}</td></tr>{% endfor %}</tbody></table>
+{% endblock %}
