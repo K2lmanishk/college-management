@@ -153,7 +153,10 @@ class ProgramSemesterFee(db.Model):
     program_id = db.Column(db.Integer, db.ForeignKey('programs.id'), nullable=False)
     semester = db.Column(db.String(50), nullable=False)
     fee_amount = db.Column(db.Float, nullable=False)
-
+    academic_year = db.Column(db.String(20), default=ACADEMIC_YEAR)  # Added column
+    
+    # REMOVE this line – the backref is already defined in Program
+    # program = db.relationship('Program', backref='fee_structures')
     # Add these classes at the VERY END of models.py (not inside any other class)
 
 class Exam(db.Model):
