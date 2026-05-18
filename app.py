@@ -685,6 +685,76 @@ def allocate_transport():
     flash('Transport allocated', 'success')
     return redirect(url_for('admin_transport'))
 
+# ========== TRANSPORT EDIT/DELETE ROUTES ==========
+@app.route('/admin/transport/edit_route', methods=['POST'])
+@login_required
+def edit_transport_route():
+    if current_user.role != 'admin': return redirect(url_for('login'))
+    route = TransportRoute.query.get(request.form['route_id'])
+    route.route_name = request.form['route_name']
+    route.vehicle_number = request.form['vehicle_number']
+    route.driver_name = request.form['driver_name']
+    route.driver_phone = request.form['driver_phone']
+    route.fee_per_month = float(request.form['fee_per_month'])
+    db.session.commit()
+    return jsonify({'success': True})
+
+@app.route('/admin/transport/delete_route/<int:route_id>', methods=['POST'])
+@login_required
+def delete_transport_route(route_id):
+    if current_user.role != 'admin': return jsonify({'success': False}), 403
+    route = TransportRoute.query.get(route_id)
+    if route:
+        db.session.delete(route)
+        db.session.commit()
+        return jsonify({'success': True})
+    return jsonify({'success': False})
+
+@app.route('/admin/transport/edit_stop', methods=['POST'])
+@login_required
+def edit_transport_stop():
+    if current_user.role != 'admin': return redirect(url_for('login'))
+    stop = TransportStop.query.get(request.form['stop_id'])
+    stop.route_id = request.form['route_id']
+    stop.stop_name = request.form['stop_name']
+    stop.stop_order = request.form['stop_order']
+    db.session.commit()
+    return jsonify({'success': True})
+
+@app.route('/admin/transport/delete_stop/<int:stop_id>', methods=['POST'])
+@login_required
+def delete_transport_stop(stop_id):
+    if current_user.role != 'admin': return jsonify({'success': False}), 403
+    stop = TransportStop.query.get(stop_id)
+    if stop:
+        db.session.delete(stop)
+        db.session.commit()
+        return jsonify({'success': True})
+    return jsonify({'success': False})
+
+@app.route('/admin/transport/edit_allocation', methods=['POST'])
+@login_required
+def edit_transport_allocation():
+    if current_user.role != 'admin': return redirect(url_for('login'))
+    alloc = TransportAllocation.query.get(request.form['alloc_id'])
+    alloc.student_id = request.form['student_id']
+    alloc.route_id = request.form['route_id']
+    alloc.stop_id = request.form['stop_id']
+    alloc.status = request.form['status']
+    db.session.commit()
+    return jsonify({'success': True})
+
+@app.route('/admin/transport/delete_allocation/<int:alloc_id>', methods=['POST'])
+@login_required
+def delete_transport_allocation(alloc_id):
+    if current_user.role != 'admin': return jsonify({'success': False}), 403
+    alloc = TransportAllocation.query.get(alloc_id)
+    if alloc:
+        db.session.delete(alloc)
+        db.session.commit()
+        return jsonify({'success': True})
+    return jsonify({'success': False})
+
 # ========== LIBRARY MANAGEMENT ==========
 @app.route('/admin/library')
 @login_required

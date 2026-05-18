@@ -1,60 +1,227 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h1>Transport Management</h1>
+<h1 class="mt-4">Transport Management</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
+    <li class="breadcrumb-item active">Transport</li>
+</ol>
+
 <ul class="nav nav-tabs" id="transportTab" role="tablist">
     <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#routes">Routes</button></li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#stops">Stops</button></li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#allocate">Allocate</button></li>
     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#allocations">Allocations</button></li>
 </ul>
+
 <div class="tab-content mt-3">
+    <!-- Routes Tab -->
     <div class="tab-pane fade show active" id="routes">
         <div class="card"><div class="card-header bg-primary text-white">Add Route</div><div class="card-body">
             <form method="POST" action="{{ url_for('add_transport_route') }}">
-                <div class="row"><div class="col-md-3"><input name="route_name" class="form-control" placeholder="Route Name" required></div>
-                <div class="col-md-3"><input name="vehicle_number" class="form-control" placeholder="Vehicle Number"></div>
-                <div class="col-md-3"><input name="driver_name" class="form-control" placeholder="Driver Name"></div>
-                <div class="col-md-2"><input name="driver_phone" class="form-control" placeholder="Driver Phone"></div>
-                <div class="col-md-1"><button class="btn btn-primary">Add</button></div></div>
+                <div class="row g-2">
+                    <div class="col-md-3"><input name="route_name" class="form-control" placeholder="Route Name" required></div>
+                    <div class="col-md-3"><input name="vehicle_number" class="form-control" placeholder="Vehicle Number"></div>
+                    <div class="col-md-3"><input name="driver_name" class="form-control" placeholder="Driver Name"></div>
+                    <div class="col-md-2"><input name="driver_phone" class="form-control" placeholder="Driver Phone"></div>
+                    <div class="col-md-1"><button class="btn btn-primary">Add</button></div>
+                </div>
             </form>
         </div></div>
-        <table class="table table-bordered mt-3"><thead class="table-dark"><tr><th>Route</th><th>Vehicle</th><th>Driver</th><th>Phone</th><th>Fee/Month</th></tr></thead>
-        <tbody>{% for r in routes %}<tr><td>{{ r.route_name }}</td><td>{{ r.vehicle_number }}</td><td>{{ r.driver_name }}</td><td>{{ r.driver_phone }}</td><td>₹{{ r.fee_per_month }}</td></tr>{% endfor %}</tbody></table>
+        <table class="table table-bordered mt-3">
+            <thead class="table-dark"><tr><th>Route</th><th>Vehicle</th><th>Driver</th><th>Phone</th><th>Fee/Month</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for r in routes %}
+                <tr>
+                    <td>{{ r.route_name }}</td>
+                    <td>{{ r.vehicle_number }}</td>
+                    <td>{{ r.driver_name }}</td>
+                    <td>{{ r.driver_phone }}</td>
+                    <td>₹{{ r.fee_per_month }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning edit-route" data-id="{{ r.id }}" data-name="{{ r.route_name }}" data-vehicle="{{ r.vehicle_number }}" data-driver="{{ r.driver_name }}" data-phone="{{ r.driver_phone }}" data-fee="{{ r.fee_per_month }}">Edit</button>
+                        <button class="btn btn-sm btn-danger delete-route" data-id="{{ r.id }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+
+    <!-- Stops Tab -->
     <div class="tab-pane fade" id="stops">
         <div class="card"><div class="card-header bg-primary text-white">Add Stop</div><div class="card-body">
             <form method="POST" action="{{ url_for('add_transport_stop') }}">
-                <div class="row"><div class="col-md-4"><select name="route_id" class="form-select" required>{% for r in routes %}<option value="{{ r.id }}">{{ r.route_name }}</option>{% endfor %}</select></div>
-                <div class="col-md-4"><input name="stop_name" class="form-control" placeholder="Stop Name" required></div>
-                <div class="col-md-2"><input name="stop_order" class="form-control" placeholder="Order" type="number"></div>
-                <div class="col-md-2"><button class="btn btn-primary">Add</button></div></div>
+                <div class="row g-2">
+                    <div class="col-md-4"><select name="route_id" class="form-select" required>{% for r in routes %}<option value="{{ r.id }}">{{ r.route_name }}</option>{% endfor %}</select></div>
+                    <div class="col-md-4"><input name="stop_name" class="form-control" placeholder="Stop Name" required></div>
+                    <div class="col-md-2"><input name="stop_order" class="form-control" placeholder="Order" type="number"></div>
+                    <div class="col-md-2"><button class="btn btn-primary">Add</button></div>
+                </div>
             </form>
         </div></div>
-        <table class="table table-bordered mt-3"><thead class="table-dark"><tr><th>Route</th><th>Stop Name</th><th>Order</th></tr></thead>
-        <tbody>{% for s in stops %}<tr><td>{{ s.route.route_name }}</td><td>{{ s.stop_name }}</td><td>{{ s.stop_order }}</td></tr>{% endfor %}</tbody></table>
+        <table class="table table-bordered mt-3">
+            <thead class="table-dark"><tr><th>Route</th><th>Stop Name</th><th>Order</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for s in stops %}
+                <tr>
+                    <td>{{ s.route.route_name }}</td>
+                    <td>{{ s.stop_name }}</td>
+                    <td>{{ s.stop_order }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning edit-stop" data-id="{{ s.id }}" data-route="{{ s.route_id }}" data-name="{{ s.stop_name }}" data-order="{{ s.stop_order }}">Edit</button>
+                        <button class="btn btn-sm btn-danger delete-stop" data-id="{{ s.id }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+
+    <!-- Allocate Tab -->
     <div class="tab-pane fade" id="allocate">
         <div class="card"><div class="card-header bg-success text-white">Allocate Transport</div><div class="card-body">
-            <form method="POST" action="{{ url_for('allocate_transport') }}">
-                <div class="row"><div class="col-md-4"><select name="student_id" class="form-select" required>{% for s in students %}<option value="{{ s.id }}">{{ s.user.full_name }} ({{ s.roll_no }})</option>{% endfor %}</select></div>
-                <div class="col-md-4"><select name="route_id" class="form-select" required>{% for r in routes %}<option value="{{ r.id }}">{{ r.route_name }}</option>{% endfor %}</select></div>
-                <div class="col-md-3"><select name="stop_id" class="form-select" required><option value="">Select Stop</option></select></div>
-                <div class="col-md-1"><button class="btn btn-success">Allocate</button></div></div>
+            <form id="allocateForm" method="POST" action="{{ url_for('allocate_transport') }}">
+                <div class="row g-2">
+                    <div class="col-md-4"><select name="student_id" class="form-select" required>{% for s in students %}<option value="{{ s.id }}">{{ s.user.full_name }} ({{ s.roll_no }})</option>{% endfor %}</select></div>
+                    <div class="col-md-4"><select name="route_id" id="routeSelect" class="form-select" required>{% for r in routes %}<option value="{{ r.id }}">{{ r.route_name }}</option>{% endfor %}</select></div>
+                    <div class="col-md-3"><select name="stop_id" id="stopSelect" class="form-select" required><option value="">Select Route First</option></select></div>
+                    <div class="col-md-1"><button class="btn btn-success">Allocate</button></div>
+                </div>
             </form>
         </div></div>
     </div>
+
+    <!-- Allocations Tab (with Edit/Delete) -->
     <div class="tab-pane fade" id="allocations">
-        <table class="table table-bordered"><thead class="table-dark"><tr><th>Student</th><th>Route</th><th>Stop</th><th>Status</th></tr></thead>
-        <tbody>{% for a in allocations %}<tr><td>{{ a.student.user.full_name }}</td><td>{{ a.route.route_name }}</td><td>{{ a.stop.stop_name }}</td><td>{{ a.status }}</td></tr>{% endfor %}</tbody></table>
+        <table class="table table-bordered">
+            <thead class="table-dark"><tr><th>Student</th><th>Route</th><th>Stop</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for a in allocations %}
+                <tr id="alloc-{{ a.id }}">
+                    <td>{{ a.student.user.full_name }} ({{ a.student.roll_no }})</td>
+                    <td>{{ a.route.route_name }}</td>
+                    <td>{{ a.stop.stop_name }}</td>
+                    <td>{{ a.status }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning edit-alloc" data-id="{{ a.id }}" data-student="{{ a.student_id }}" data-route="{{ a.route_id }}" data-stop="{{ a.stop_id }}">Edit</button>
+                        <button class="btn btn-sm btn-danger delete-alloc" data-id="{{ a.id }}">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
+
+<!-- Edit Modals (hidden initially) -->
+<div class="modal fade" id="editRouteModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>Edit Route</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="editRouteForm"><input type="hidden" name="route_id" id="editRouteId"><div class="mb-2"><label>Route Name</label><input name="route_name" id="editRouteName" class="form-control" required></div><div class="mb-2"><label>Vehicle Number</label><input name="vehicle_number" id="editVehicleNumber" class="form-control"></div><div class="mb-2"><label>Driver Name</label><input name="driver_name" id="editDriverName" class="form-control"></div><div class="mb-2"><label>Driver Phone</label><input name="driver_phone" id="editDriverPhone" class="form-control"></div><div class="mb-2"><label>Fee per Month</label><input name="fee_per_month" id="editFeePerMonth" class="form-control" step="0.01"></div><button type="submit" class="btn btn-primary">Save</button></form></div></div></div></div>
+
+<div class="modal fade" id="editStopModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>Edit Stop</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="editStopForm"><input type="hidden" name="stop_id" id="editStopId"><div class="mb-2"><label>Route</label><select name="route_id" id="editStopRoute" class="form-select">{% for r in routes %}<option value="{{ r.id }}">{{ r.route_name }}</option>{% endfor %}</select></div><div class="mb-2"><label>Stop Name</label><input name="stop_name" id="editStopName" class="form-control" required></div><div class="mb-2"><label>Order</label><input name="stop_order" id="editStopOrder" class="form-control" type="number"></div><button type="submit" class="btn btn-primary">Save</button></form></div></div></div></div>
+
+<div class="modal fade" id="editAllocModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>Edit Allocation</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="editAllocForm"><input type="hidden" name="alloc_id" id="editAllocId"><div class="mb-2"><label>Student</label><select name="student_id" id="editAllocStudent" class="form-select">{% for s in students %}<option value="{{ s.id }}">{{ s.user.full_name }} ({{ s.roll_no }})</option>{% endfor %}</select></div><div class="mb-2"><label>Route</label><select name="route_id" id="editAllocRoute" class="form-select">{% for r in routes %}<option value="{{ r.id }}">{{ r.route_name }}</option>{% endfor %}</select></div><div class="mb-2"><label>Stop</label><select name="stop_id" id="editAllocStop" class="form-select"><option value="">Select Route First</option></select></div><div class="mb-2"><label>Status</label><select name="status" id="editAllocStatus" class="form-select"><option>Active</option><option>Inactive</option></select></div><button type="submit" class="btn btn-primary">Save</button></form></div></div></div></div>
+
 <script>
-    document.querySelector('select[name="route_id"]').addEventListener('change', function() {
-        let routeId = this.value;
-        fetch(`/api/transport_stops/${routeId}`).then(res=>res.json()).then(data=>{
-            let stopSelect = document.querySelector('select[name="stop_id"]');
-            stopSelect.innerHTML = '<option value="">Select Stop</option>';
-            data.forEach(stop => { stopSelect.innerHTML += `<option value="${stop.id}">${stop.stop_name}</option>`; });
+    // Populate stops dynamically when route changes
+    function loadStops(routeId, targetSelectId, currentStopId = null) {
+        if (!routeId) return;
+        fetch(`/api/transport_stops/${routeId}`)
+            .then(res => res.json())
+            .then(data => {
+                let select = document.getElementById(targetSelectId);
+                select.innerHTML = '<option value="">Select Stop</option>';
+                data.forEach(stop => {
+                    let selected = (currentStopId == stop.id) ? 'selected' : '';
+                    select.innerHTML += `<option value="${stop.id}" ${selected}>${stop.stop_name}</option>`;
+                });
+            });
+    }
+
+    // For allocation form (new allocation)
+    document.getElementById('routeSelect')?.addEventListener('change', function() {
+        loadStops(this.value, 'stopSelect');
+    });
+
+    // For edit allocation modal
+    document.getElementById('editAllocRoute')?.addEventListener('change', function() {
+        let currentStopId = document.getElementById('editAllocStop').value;
+        loadStops(this.value, 'editAllocStop', currentStopId);
+    });
+
+    // Edit Route
+    document.querySelectorAll('.edit-route').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('editRouteId').value = btn.dataset.id;
+            document.getElementById('editRouteName').value = btn.dataset.name;
+            document.getElementById('editVehicleNumber').value = btn.dataset.vehicle;
+            document.getElementById('editDriverName').value = btn.dataset.driver;
+            document.getElementById('editDriverPhone').value = btn.dataset.phone;
+            document.getElementById('editFeePerMonth').value = btn.dataset.fee;
+            new bootstrap.Modal(document.getElementById('editRouteModal')).show();
+        });
+    });
+    document.getElementById('editRouteForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        fetch('/admin/transport/edit_route', { method: 'POST', body: new FormData(this) }).then(() => location.reload());
+    });
+
+    // Delete Route
+    document.querySelectorAll('.delete-route').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if(confirm('Delete route?')) fetch('/admin/transport/delete_route/' + btn.dataset.id, { method: 'POST' }).then(() => location.reload());
+        });
+    });
+
+    // Edit Stop
+    document.querySelectorAll('.edit-stop').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('editStopId').value = btn.dataset.id;
+            document.getElementById('editStopRoute').value = btn.dataset.route;
+            document.getElementById('editStopName').value = btn.dataset.name;
+            document.getElementById('editStopOrder').value = btn.dataset.order;
+            new bootstrap.Modal(document.getElementById('editStopModal')).show();
+        });
+    });
+    document.getElementById('editStopForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        fetch('/admin/transport/edit_stop', { method: 'POST', body: new FormData(this) }).then(() => location.reload());
+    });
+
+    // Delete Stop
+    document.querySelectorAll('.delete-stop').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if(confirm('Delete stop?')) fetch('/admin/transport/delete_stop/' + btn.dataset.id, { method: 'POST' }).then(() => location.reload());
+        });
+    });
+
+    // Edit Allocation
+    document.querySelectorAll('.edit-alloc').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('editAllocId').value = btn.dataset.id;
+            document.getElementById('editAllocStudent').value = btn.dataset.student;
+            document.getElementById('editAllocRoute').value = btn.dataset.route;
+            // load stops for that route then set stop
+            fetch(`/api/transport_stops/${btn.dataset.route}`).then(res=>res.json()).then(data=>{
+                let stopSelect = document.getElementById('editAllocStop');
+                stopSelect.innerHTML = '<option value="">Select Stop</option>';
+                data.forEach(stop => {
+                    let selected = (stop.id == btn.dataset.stop) ? 'selected' : '';
+                    stopSelect.innerHTML += `<option value="${stop.id}" ${selected}>${stop.stop_name}</option>`;
+                });
+            });
+            document.getElementById('editAllocStatus').value = btn.dataset.status || 'Active';
+            new bootstrap.Modal(document.getElementById('editAllocModal')).show();
+        });
+    });
+    document.getElementById('editAllocForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        fetch('/admin/transport/edit_allocation', { method: 'POST', body: new FormData(this) }).then(() => location.reload());
+    });
+
+    // Delete Allocation
+    document.querySelectorAll('.delete-alloc').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if(confirm('Delete allocation?')) fetch('/admin/transport/delete_allocation/' + btn.dataset.id, { method: 'POST' }).then(() => location.reload());
         });
     });
 </script>
