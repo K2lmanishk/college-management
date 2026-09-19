@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>My Profile</h2>
+<form method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data" class="card p-4" style="max-width:560px;">
+  {% csrf_token %}
+  {% if user.profile_pic %}<img src="{{ user.profile_pic.url }}" class="rounded-circle mb-3" width="96" height="96" style="object-fit:cover;" alt="Profile picture">{% endif %}
+  <label class="form-label">Username</label>
+  <input class="form-control mb-2" value="{{ user.username }}" disabled>
+  <label class="form-label">Full name</label>
+  <input name="full_name" class="form-control mb-2" value="{{ user.full_name }}">
+  <label class="form-label">Email</label>
+  <input name="email" type="email" class="form-control mb-2" value="{{ user.email }}">
+  <label class="form-label">Profile picture</label>
+  <input name="profile_pic" type="file" accept="image/*" class="form-control mb-3">
+  <button class="btn btn-primary" style="max-width:200px;">Save changes</button>
+</form>
+{% endblock %}

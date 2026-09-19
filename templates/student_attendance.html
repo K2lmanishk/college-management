@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>My Attendance</h2>
+<div class="card p-3 mb-3" style="max-width:320px;">
+  <small>Overall</small><h3>{{ percentage }}%</h3><small>{{ present }} present out of {{ total }} classes</small>
+</div>
+<table class="table">
+  <thead><tr><th>Date</th><th>Subject</th><th>Status</th></tr></thead>
+  <tbody>
+  {% for a in attendance %}
+    <tr><td>{{ a.date|date:"d M Y" }}</td><td>{{ a.subject.name }}</td>
+    <td><span class="badge bg-{% if a.status == 'Present' %}success{% else %}danger{% endif %}">{{ a.status }}</span></td></tr>
+  {% empty %}<tr><td colspan="3">No attendance records yet.</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

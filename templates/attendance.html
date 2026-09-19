@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Mark Attendance</h2>
+<form method="post" class="card p-3">
+  {% csrf_token %}
+  <div class="row g-2">
+    <div class="col-md-6">
+      <select name="subject_id" id="subject" class="form-select" required>
+        <option value="">Select subject</option>
+        {% for a in assignments %}<option value="{{ a.subject.id }}">{{ a.subject.name }} — {{ a.subject.semester }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3"><input type="date" name="date" id="dateInput" class="form-control" required></div>
+  </div>
+  <table class="table mt-3">
+    <thead><tr><th>Roll no</th><th>Name</th><th>Present</th><th>Absent</th></tr></thead>
+    <tbody id="studentRows"><tr><td colspan="4" class="text-muted">Select a subject to load students.</td></tr></tbody>
+  </table>
+  <button class="btn btn-primary" style="max-width:200px;">Save Attendance</button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('dateInput').valueAsDate = new Date();
+const base = "{% url 'get_students_by_subject' 0 %}";
+document.getElementById('subject').addEventListener('change', async e => {
+  const tbody = document.getElementById('studentRows');
+  tbody.innerHTML = '';
+  if (!e.target.value) return;
+  const res = await fetch(base.replace('/0/', '/' + e.target.value + '/'));
+  const students = await res.json();
+  if (!students.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="text-muted">No students in this subject\'s program/semester.</td></tr>';
+    return;
+  }
+  students.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td></td><td></td>' +
+      '<td><input type="radio" class="form-check-input" name="status_' + s.id + '" value="Present" checked></td>' +
+      '<td><input type="radio" class="form-check-input" name="status_' + s.id + '" value="Absent"></td>';
+    tr.children[0].textContent = s.roll_no;
+    tr.children[1].textContent = s.name;
+    tbody.appendChild(tr);
+  });
+});
+</script>
+{% endblock %}

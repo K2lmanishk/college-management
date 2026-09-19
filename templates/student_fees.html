@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>My Fees</h2>
+<table class="table">
+  <thead><tr><th>Amount</th><th>Paid</th><th>Due</th><th>Due date</th><th>Status</th><th>Method</th></tr></thead>
+  <tbody>
+  {% for f in fees %}
+    <tr><td>₹{{ f.amount|floatformat:2 }}</td><td>₹{{ f.paid_amount|floatformat:2 }}</td><td>₹{{ f.due_amount|floatformat:2 }}</td>
+    <td>{{ f.due_date|date:"d M Y" }}</td>
+    <td><span class="badge bg-{% if f.status == 'Paid' %}success{% elif f.status == 'Partial' %}warning{% else %}danger{% endif %}">{{ f.status }}</span></td>
+    <td>{{ f.payment_method|default:"-" }}</td></tr>
+  {% empty %}<tr><td colspan="6">No fee records.</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}{{ college_name }}{% endblock %}</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="manifest" href="{% static 'manifest.json' %}">
+</head>
+<body>
+{% if user.is_authenticated %}
+<nav class="navbar navbar-expand-lg glass-navbar">
+  <div class="container-fluid">
+    <a class="navbar-brand brand-text" href="{% url 'dashboard' %}">
+      <i class="bi bi-mortarboard-fill"></i> {{ college_name }}
+    </a>
+    <div class="d-flex align-items-center gap-3">
+      <button id="themeToggle" class="btn btn-sm btn-outline-secondary" type="button">
+        <i class="bi bi-moon-stars"></i>
+      </button>
+      <span class="badge bg-primary">{{ user.role|upper }}</span>
+      <div class="dropdown">
+        <button class="btn btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown" type="button">
+          {{ user.full_name|default:user.username }}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+          <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="row">
+    <aside class="col-md-2 glass-sidebar p-3">
+      {% if user.role == 'admin' %}
+        <a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="nav-link" href="{% url 'manage_users' %}"><i class="bi bi-people"></i> Users</a>
+        <a class="nav-link" href="{% url 'manage_subjects' %}"><i class="bi bi-book"></i> Subjects</a>
+        <a class="nav-link" href="{% url 'admin_manage_fees' %}"><i class="bi bi-cash"></i> Fees</a>
+        <a class="nav-link" href="{% url 'manage_program_semester_fees' %}"><i class="bi bi-diagram-3"></i> Program Fees</a>
+        <a class="nav-link" href="{% url 'manage_notices' %}"><i class="bi bi-megaphone"></i> Notices</a>
+        <a class="nav-link" href="{% url 'admin_admissions' %}"><i class="bi bi-envelope"></i> Admissions</a>
+        <a class="nav-link" href="{% url 'admin:index' %}"><i class="bi bi-gear"></i> Django Admin</a>
+      {% elif user.role == 'faculty' %}
+        <a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="nav-link" href="{% url 'mark_attendance' %}"><i class="bi bi-check2-square"></i> Attendance</a>
+        <a class="nav-link" href="{% url 'enter_marks' %}"><i class="bi bi-pencil"></i> Marks</a>
+      {% else %}
+        <a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a class="nav-link" href="{% url 'student_attendance' %}"><i class="bi bi-calendar-check"></i> Attendance</a>
+        <a class="nav-link" href="{% url 'student_marks' %}"><i class="bi bi-trophy"></i> Marks</a>
+        <a class="nav-link" href="{% url 'view_fees' %}"><i class="bi bi-cash"></i> Fees</a>
+      {% endif %}
+    </aside>
+    <main class="col-md-10 p-4">
+      {% include 'partials/messages.html' %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% else %}
+  {% block auth_content %}{% endblock %}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/script.js' %}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

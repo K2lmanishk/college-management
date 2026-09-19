@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Manage Users</h2>
+<form method="post" action="{% url 'add_user' %}" class="card p-3 mb-4">
+  {% csrf_token %}
+  <div class="row g-2">
+    <div class="col-md-3"><input name="username" class="form-control" placeholder="Username" required></div>
+    <div class="col-md-3"><input name="full_name" class="form-control" placeholder="Full name"></div>
+    <div class="col-md-3"><input name="email" type="email" class="form-control" placeholder="Email"></div>
+    <div class="col-md-3"><input name="password" type="password" class="form-control" placeholder="Password" required></div>
+    <div class="col-md-2">
+      <select name="role" id="roleSelect" class="form-select">
+        <option value="student">Student</option>
+        <option value="faculty">Faculty</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="col-md-2 student-only"><input name="roll_no" class="form-control" placeholder="Roll no"></div>
+    <div class="col-md-3 student-only">
+      <select name="program_id" class="form-select">
+        <option value="">Program</option>
+        {% for p in programs %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3 student-only">
+      <select name="semester" class="form-select">
+        {% for s in semesters %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-primary w-100">Add User</button></div>
+  </div>
+</form>
+
+<div class="table-responsive">
+<table class="table table-hover align-middle">
+  <thead><tr><th>Username</th><th>Name</th><th>Email</th><th>Role</th><th></th></tr></thead>
+  <tbody>
+    {% for u in users %}
+    <tr id="user-{{ u.id }}">
+      <td>{{ u.username }}</td><td>{{ u.full_name }}</td><td>{{ u.email }}</td>
+      <td><span class="badge bg-secondary">{{ u.role }}</span></td>
+      <td>{% if u.id != user.id %}<button class="btn btn-sm btn-outline-danger" onclick="deleteUser({{ u.id }})"><i class="bi bi-trash"></i></button>{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const roleSel = document.getElementById('roleSelect');
+function toggleStudentFields() {
+  document.querySelectorAll('.student-only').forEach(el => {
+    el.style.display = roleSel.value === 'student' ? '' : 'none';
+  });
+}
+roleSel.addEventListener('change', toggleStudentFields);
+toggleStudentFields();
+
+async function deleteUser(id) {
+  if (!confirm('Delete this user?')) return;
+  const url = "{% url 'delete_user' 0 %}".replace('/0/', '/' + id + '/');
+  const res = await fetch(url, { method: 'POST', headers: { 'X-CSRFToken': '{{ csrf_token }}' } });
+  if (res.ok) document.getElementById('user-' + id).remove();
+  else alert('Could not delete user');
+}
+</script>
+{% endblock %}

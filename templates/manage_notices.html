@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Notices</h2>
+<form method="post" class="card p-3 mb-4">
+  {% csrf_token %}
+  <input name="title" class="form-control mb-2" placeholder="Title" required>
+  <textarea name="content" class="form-control mb-2" rows="3" placeholder="Content" required></textarea>
+  <select name="audience" class="form-select mb-2" style="max-width:220px;">
+    <option value="all">Everyone</option><option value="student">Students</option><option value="faculty">Faculty</option>
+  </select>
+  <button class="btn btn-primary" style="max-width:200px;">Post Notice</button>
+</form>
+{% for n in notices %}
+<div class="card mb-2" id="notice-{{ n.id }}">
+  <div class="card-body d-flex justify-content-between">
+    <div>
+      <h5>{{ n.title }} <span class="badge bg-info">{{ n.audience }}</span></h5>
+      <p class="mb-1">{{ n.content|linebreaksbr }}</p>
+      <small class="text-muted">{{ n.created_at|date:"d M Y, H:i" }} by {{ n.created_by.username|default:"-" }}</small>
+    </div>
+    <button class="btn btn-sm btn-outline-danger align-self-start" onclick="deleteNotice({{ n.id }})"><i class="bi bi-trash"></i></button>
+  </div>
+</div>
+{% empty %}<p>No notices yet.</p>{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function deleteNotice(id) {
+  if (!confirm('Delete this notice?')) return;
+  const url = "{% url 'delete_notice' 0 %}".replace('/0/', '/' + id + '/');
+  const res = await fetch(url, { method: 'POST', headers: { 'X-CSRFToken': '{{ csrf_token }}' } });
+  if (res.ok) document.getElementById('notice-' + id).remove();
+}
+</script>
+{% endblock %}

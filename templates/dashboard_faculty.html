@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Faculty Dashboard</h2>
+<p>Welcome, {{ user.full_name|default:user.username }}!</p>
+<div class="card mt-3">
+  <div class="card-header">My Subjects</div>
+  <div class="card-body">
+    <table class="table">
+      <thead><tr><th>Subject</th><th>Program</th><th>Semester</th></tr></thead>
+      <tbody>
+        {% for a in assignments %}
+          <tr><td>{{ a.subject.name }}</td><td>{{ a.subject.program.name|default:"-" }}</td><td>{{ a.subject.semester }}</td></tr>
+        {% empty %}<tr><td colspan="3">No assignments yet. Ask the admin to assign subjects to you.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

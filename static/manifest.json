@@ -1,0 +1,9 @@
+{
+  "name": "College Management System",
+  "short_name": "CollegeMS",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#667eea",
+  "icons": []
+}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Manage Subjects</h2>
+<form method="post" class="card p-3 mb-3">
+  {% csrf_token %}
+  <div class="row g-2">
+    <div class="col-md-3">
+      <select name="program_id" class="form-select">
+        <option value="">Program</option>
+        {% for p in programs %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select name="semester" class="form-select">
+        {% for s in semesters %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3"><input name="name" class="form-control" placeholder="Subject name" required></div>
+    <div class="col-md-2"><input name="code" class="form-control" placeholder="Code" required></div>
+    <div class="col-md-1"><input name="credits" type="number" min="1" class="form-control" value="3"></div>
+    <div class="col-md-1">
+      <select name="type" class="form-select"><option>Theory</option><option>Practical</option></select>
+    </div>
+  </div>
+  <button class="btn btn-primary mt-3" style="max-width:200px;">Add Subject</button>
+</form>
+<div class="table-responsive">
+<table class="table"><thead><tr><th>Code</th><th>Name</th><th>Semester</th><th>Program</th><th>Credits</th><th>Type</th></tr></thead>
+<tbody>{% for s in subjects %}<tr><td>{{ s.code }}</td><td>{{ s.name }}</td><td>{{ s.semester }}</td><td>{{ s.program.name|default:"-" }}</td><td>{{ s.credits }}</td><td>{{ s.type }}</td></tr>
+{% empty %}<tr><td colspan="6">No subjects yet.</td></tr>{% endfor %}</tbody></table>
+</div>
+<p class="text-muted small">To assign subjects to faculty, use <a href="{% url 'admin:academics_facultyassignment_changelist' %}">Django Admin → Faculty assignments</a>.</p>
+{% endblock %}

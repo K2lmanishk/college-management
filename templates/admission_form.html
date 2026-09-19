@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Apply Online - {{ college_name }}{% endblock %}
+{% block auth_content %}
+<div class="container py-5" style="max-width:900px;">
+  <a href="{% url 'login' %}" class="d-block mb-3">&larr; Back to login</a>
+  {% include 'partials/admission_form_body.html' %}
+</div>
+{% endblock %}
+{% block content %}{% include 'partials/admission_form_body.html' %}{% endblock %}

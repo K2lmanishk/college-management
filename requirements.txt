@@ -1,0 +1,8 @@
+Django==5.0.6
+Pillow>=10.2.0
+python-dotenv>=1.0.0
+whitenoise>=6.6.0
+gunicorn>=21.2.0
+twilio>=9.4.0
+# Only needed if you switch to PostgreSQL (see settings.py):
+# psycopg2-binary>=2.9.9

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>My Marks</h2>
+<table class="table">
+  <thead><tr><th>Subject</th><th>Exam</th><th>Obtained</th><th>Max</th><th>%</th></tr></thead>
+  <tbody>
+  {% for m in marks %}
+    <tr><td>{{ m.subject.name }}</td><td>{{ m.exam_type }}</td><td>{{ m.obtained_marks }}</td><td>{{ m.max_marks }}</td>
+    <td>{% widthratio m.obtained_marks m.max_marks 100 %}%</td></tr>
+  {% empty %}<tr><td colspan="5">No marks published yet.</td></tr>{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

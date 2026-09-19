@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Fee Management</h2>
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><div class="card p-3"><small>Total Fees</small><h4>₹{{ total_fees|floatformat:2 }}</h4></div></div>
+  <div class="col-md-3"><div class="card p-3"><small>Collected</small><h4 class="text-success">₹{{ total_paid|floatformat:2 }}</h4></div></div>
+  <div class="col-md-3"><div class="card p-3"><small>Outstanding</small><h4 class="text-danger">₹{{ total_due|floatformat:2 }}</h4></div></div>
+  <div class="col-md-3"><div class="card p-3"><small>Pending Records</small><h4>{{ pending_count }}</h4></div></div>
+</div>
+<div class="table-responsive">
+<table class="table align-middle">
+  <thead><tr><th>Student</th><th>Program</th><th>Amount</th><th>Paid</th><th>Due</th><th>Due date</th><th>Status</th><th>Record payment</th></tr></thead>
+  <tbody>
+  {% for f in fees %}
+  <tr>
+    <td>{{ f.student.roll_no }} – {{ f.student.user.full_name }}</td>
+    <td>{{ f.student.program.name|default:"-" }}</td>
+    <td>₹{{ f.amount|floatformat:2 }}</td>
+    <td>₹{{ f.paid_amount|floatformat:2 }}</td>
+    <td>₹{{ f.due_amount|floatformat:2 }}</td>
+    <td>{{ f.due_date|date:"d M Y" }}</td>
+    <td><span class="badge bg-{% if f.status == 'Paid' %}success{% elif f.status == 'Partial' %}warning{% else %}danger{% endif %}">{{ f.status }}</span></td>
+    <td>
+      {% if f.status != 'Paid' %}
+      <form method="post" action="{% url 'record_payment' %}" class="d-flex gap-1">
+        {% csrf_token %}
+        <input type="hidden" name="fee_id" value="{{ f.id }}">
+        <input name="payment_amount" type="number" step="0.01" min="0.01" class="form-control form-control-sm" style="width:100px" placeholder="₹" required>
+        <select name="payment_method" class="form-select form-select-sm" style="width:100px"><option>Cash</option><option>UPI</option><option>Card</option><option>Bank</option></select>
+        <button class="btn btn-sm btn-success">Pay</button>
+      </form>
+      {% endif %}
+    </td>
+  </tr>
+  {% empty %}<tr><td colspan="8">No fee records yet. Add them via <a href="{% url 'admin:finance_fee_changelist' %}">Django Admin</a>.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; background: #f0f4f8; }
+[data-bs-theme="dark"] body { background: #0a0a0f; color: #f1f5f9; }
+.glass-navbar { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid #e2e8f0; }
+[data-bs-theme="dark"] .glass-navbar { background: rgba(19,20,31,0.85); border-color: #2d2f45; }
+.glass-sidebar { background: rgba(255,255,255,0.75); backdrop-filter: blur(12px); min-height: calc(100vh - 70px); }
+[data-bs-theme="dark"] .glass-sidebar { background: rgba(19,20,31,0.8); }
+.glass-sidebar .nav-link { color: inherit; padding: 10px 12px; border-radius: 10px; margin: 4px 0; display: block; text-decoration: none; }
+.glass-sidebar .nav-link:hover { background: rgba(102,126,234,0.1); }
+.stat-card { border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
